@@ -1,0 +1,54 @@
+\documentclass{report}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx, longtable, float, titlesec, hyperref, enumitem, dingbat, soul, multicol}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[margin=3cm]{geometry}
+
+% Cambia el color de los links
+\hypersetup{
+    hidelinks = true
+}
+
+% Elimina la palabra "Capítulo" de los títulos de los capítulos
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge\thechapter.\space}
+
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
+
+% Añade numeración a los subsubsections y los añade al índice
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\begin{document}
+    \begin{titlepage}
+        \centering
+        \includegraphics[width=0.6\textwidth]{./.img/logo.jpg}\\
+        \vspace{1cm}
+        \LARGE Técnicas de Inteligencia Artificial\\
+        \vspace{0.5cm}
+        \Large Ingeniería Informática de Gestión y Sistemas de Información\\
+        \vspace{3cm}
+        \Huge Practica 1\\
+        \huge Busqueda En Profundidad\\
+        \vspace{2.5cm}
+        \Large Autores:\\
+        \vspace{0.2cm}
+        \large Xabier Gabiña\\
+        \vfill
+        \today
+    \end{titlepage}
+    \tableofcontents
+    \listoffigures
+    \listoftables
+    \chapter{Introducción}
+    \chapter{Desarrollo}
+      \section{Primera implementación}
+      \section{Segunda implementación}
+    \chapter{Conclusiones}
+    \bibliographystyle{plain}
+    \bibliography{bibliografia.bib}
+\end{document}
