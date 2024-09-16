@@ -1,6 +1,0 @@
-\babel@toc {spanish}{}\relax 
-\contentsline {chapter}{\numberline {1}Introducción}{4}{chapter.1}%
-\contentsline {chapter}{\numberline {2}Desarrollo}{5}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Primera implementación}{5}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Segunda implementación}{5}{section.2.2}%
-\contentsline {chapter}{\numberline {3}Conclusiones}{6}{chapter.3}%

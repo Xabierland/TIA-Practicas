@@ -161,7 +161,9 @@ if __name__ == "__main__":
     raiz=generar_arbol(17)
     print("Arbol generado:")
     imprimir_arbol(raiz)
+    print("DFS v1:")
     dfs_v1(raiz)
+    print("DFS final:")
     dfs_final(raiz)
     
     
