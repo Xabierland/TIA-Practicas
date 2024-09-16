@@ -8,7 +8,7 @@
 *.log
 *.lot
 *.out
-*.syntex.gz
+*.synctex.gz
 *.toc
 
 # Byte-compiled / optimized / DLL files
