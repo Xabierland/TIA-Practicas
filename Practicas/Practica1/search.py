@@ -114,17 +114,17 @@ def breadthFirstSearch(problem):
     Returns:
         list: Lista de acciones para llegar al objetivo
     """
-    queue = util.Queue()  # Añadir el nodo inicial a la pila
+    queue = util.Queue()  # Añadir el nodo inicial a la cola
     queue.push([problem.getStartState(), []])
     visited = set()     # Conjunto para almacenar los nodos visitados
     
-    while not queue.isEmpty():    # Mientras haya elementos en el stack
-        nodo_actual = queue.pop()   # Sacar el último elemento de la pila
+    while not queue.isEmpty():    # Mientras haya elementos en la cola
+        nodo_actual = queue.pop()   # Sacar el primer elemento de la cola
         if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
             return nodo_actual[1]  # Devolver el camino
         if nodo_actual[0] not in visited:
             visited.add(nodo_actual[0])
-            for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
+            for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la cola
                 camino = nodo_actual[1] + [accion]
                 queue.push([estado, camino])
 
