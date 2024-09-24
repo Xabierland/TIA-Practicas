@@ -1,0 +1,183 @@
+\documentclass{report}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx, longtable, float, titlesec, hyperref, enumitem, dingbat, soul, multicol, listings}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[margin=2cm]{geometry}
+
+% Cambia el color de los links
+\hypersetup{
+    hidelinks = true
+}
+
+% Python Code
+\lstdefinestyle{Python}{
+  commentstyle=\color{brown},
+  keywordstyle=\color{violet},
+  numberstyle=\tiny\color{gray},
+  stringstyle=\color{purple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  literate={ñ}{{\~n}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+}
+\lstset{style=Python}
+
+% Elimina la palabra "Capítulo" de los títulos de los capítulos
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge\thechapter.\space}
+
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
+
+% Añade numeración a los subsubsections y los añade al índice
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\begin{document}
+    \begin{titlepage}
+        \centering
+        \includegraphics[width=0.6\textwidth]{./.img/logo.jpg}\\
+        \vspace{1cm}
+        \LARGE Técnicas de Inteligencia Artificial\\
+        \vspace{0.5cm}
+        \Large Ingeniería Informática de Gestión y Sistemas de Información\\
+        \vspace{3cm}
+        \Huge Practica 1\\
+        \huge Problemas de Búsqueda\\
+        \vspace{2.5cm}
+        \Large Autor(es):\\
+        \vspace{0.2cm}
+        \large Xabier Gabiña\\
+        \vfill
+        \today
+    \end{titlepage}
+    \tableofcontents
+    \chapter{Introducción}
+      \paragraph*{}{
+        En el marco de la asignatura de Técnicas de Inteligencia Artificial, se nos ha propuesto implementar y analizar diversos algoritmos de búsqueda aplicados al contexto de un proyecto académico desarrollado por la Universidad de Berkeley, basado en el clásico juego Pacman. El objetivo principal de esta práctica es profundizar en el funcionamiento de diferentes estrategias de búsqueda, estudiando su eficiencia y comportamiento en diferentes escenarios.\\
+      }
+      \paragraph*{}{
+
+      }
+    \chapter{Algoritmos no informados}
+      \section{DFS - Depth First Search}
+        \subsection*{Descripción}
+          \paragraph*{}{
+            DFS o Depth First Search es un algoritmo de búsqueda no informado que se basa en la exploración de todos los nodos de un grafo siguiendo una rama hasta llegar a un nodo hoja, para después retroceder y explorar otra rama.\\
+            Este algoritmo se implementa mediante una pila, en la que se van almacenando los nodos a visitar.\\
+            Su coste en tiempo es de O(b\textsuperscript{m}), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
+            Su coste en espacio es de O(bm), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
+          }
+          
+        \subsection*{Primera implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación final del DFS]
+def depthFirstSearch(problem):
+"""
+Implementación del algoritmo de búsqueda en profundidad.
+
+Args:
+    problem (SearchProblem): Problema de búsqueda
+Returns:
+    list: Lista de acciones para llegar al objetivo
+"""
+  stack = [problem] # Pila para almacenar los nodos a visitar
+  visited = set()     # Conjunto para almacenar los nodos visitados
+  path = []           # Lista para almacenar el camino al nodo objetivo
+
+  while stack:    # Mientras haya elementos en el stack
+      nodo_actual = stack.pop()   # Sacar el último elemento de la pila
+      if nodo_actual in visited:  # Si el nodo actual ya ha sido visitado
+          continue
+      visited.add(nodo_actual)   # Marcar el nodo actual como visitado
+      path.append(nodo_actual.contenido)  # Añadir el nodo actual al camino
+      if nodo_actual.isGoalState():  # Si el nodo actual es el objetivo
+          return path
+      for hijo in reversed(nodo_actual.getSuccesor()): # Añadir los hijos del nodo actual a la pila
+          stack.append(hijo)
+          \end{lstlisting}
+        \subsection*{Implementación Final}
+          \begin{lstlisting}[language=Python, caption=Implementación final del DFS]
+def depthFirstSearch(problem):
+"""
+Implementación del algoritmo de búsqueda en profundidad.
+
+Args:
+    problem (SearchProblem): Problema de búsqueda
+Returns:
+    list: Lista de acciones para llegar al objetivo
+"""
+stack = util.Stack()  # Añadir el nodo inicial a la pila
+stack.push([problem.getStartState(), []])
+visited = set()  # Conjunto para almacenar los nodos visitados
+
+while not stack.isEmpty():  # Mientras haya elementos en el stack
+    nodo_actual = stack.pop()  # Sacar el último elemento de la pila
+    if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+        return nodo_actual[1]  # Devolver el camino
+    if nodo_actual[0] not in visited:
+        visited.add(nodo_actual[0])
+        for estado, accion, costo in reversed(problem.getSuccessors(nodo_actual[0])): 
+            camino = nodo_actual[1] + [accion]
+            stack.push([estado, camino])
+          \end{lstlisting}
+        \subsection*{Comentarios}
+          \paragraph*{}{
+
+          }
+      \clearpage\section{BFS - Breadth First Search}
+        \subsection*{Descripción}
+          \paragraph*{}{
+
+          }
+        \subsection*{Implementación Final}
+          \paragraph*{}{
+
+          }
+        \subsection*{Comentarios}
+      \clearpage\section{UCS - Uniform Cost Search}
+        \subsection*{Descripción}
+          \paragraph*{}{
+
+          }
+        \subsection*{Primera implementación}
+          \paragraph*{}{
+
+          }
+        \subsection*{Implementación Final}
+          \paragraph*{}{
+
+          }
+        \subsection*{Comentarios}
+          \paragraph*{}{
+
+          }
+    \chapter{Algoritmos informados}
+      \section{A*}
+        \subsection*{Descripción}
+          \paragraph*{}{
+
+          }
+        \subsection*{Primera implementación}
+          \paragraph*{}{
+
+          }
+        \subsection*{Implementación Final}
+          \paragraph*{}{
+
+          }
+        \subsection*{Comentarios}
+          \paragraph*{}{
+
+          }
+\end{document}

@@ -129,14 +129,18 @@ def dfs_v1(nodo_raiz):
     
     while stack:    # Mientras haya elementos en el stack
         nodo_actual = stack.pop()   # Sacar el último elemento de la pila
-        if nodo_actual in visited:  # Si el nodo actual no ha sido visitado
+        if nodo_actual in visited:  # Si el nodo actual ya ha sido visitado
             continue
         visited.add(nodo_actual)   # Marcar el nodo actual como visitado
+        path.append(nodo_actual.contenido)  # Añadir el nodo actual al camino
         if nodo_actual.isGoalState():  # Si el nodo actual es el objetivo
-            break
+            print("Nodo objetivo encontrado:", nodo_actual.contenido)
+            print("Camino al nodo objetivo:", " -> ".join(path))
+            return
         for hijo in reversed(nodo_actual.getSuccesor()): # Añadir los hijos del nodo actual a la pila
             stack.append(hijo)
-    print("Nodo objetivo encontrado:", nodo_actual.contenido)
+    print("Nodo objetivo no encontrado")
+    
 
 def dfs_final(nodo_raiz):
     stack = [nodo_raiz] # Pila para almacenar los nodos a visitar
