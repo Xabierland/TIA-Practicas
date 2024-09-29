@@ -139,7 +139,7 @@ def uniformCostSearch(problem):
         list: Lista de acciones para llegar al objetivo
     """
     queue = util.PriorityQueue()  # Añadir el nodo inicial a el heap
-    queue.push([problem.getStartState(), []])
+    queue.push([problem.getStartState(), [], 0], 0)
     visited = set()     # Conjunto para almacenar los nodos visitados
     
     while not queue.isEmpty():    # Mientras haya elementos en el stack
@@ -150,7 +150,7 @@ def uniformCostSearch(problem):
             visited.add(nodo_actual[0])
             for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
                 camino = nodo_actual[1] + [accion]
-                queue.push([estado, camino])
+                queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo)
 
 
 def nullHeuristic(state, problem=None):
