@@ -138,10 +138,8 @@ while not stack.isEmpty():  # Mientras haya elementos en el stack
       \clearpage\section{BFS - Breadth First Search}
         \subsection*{Descripción}
           \paragraph*{}{
-            BFS o Breadth First Search es un algoritmo de búsqueda no informado que se basa en la exploración de todos los nodos de un grafo siguiendo un orden de anchura, es decir, se visitan todos los nodos de un nivel antes de pasar al siguiente.\\
-            Este algoritmo se implementa mediante una cola, en la que se van almacenando los nodos a visitar.\\
-            Su coste en tiempo es de O(b\textsuperscript{m}), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
-            Su coste en espacio es de O(bm), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
+            BFS o Breath First Search es un algoritmo de búsqueda no informado que se basa en la exploración de todos los nodos de un grafo nivel por nivel. Este algoritmo se implementa mediante una cola en la que se van almacenando los nodos que se deben visitar, manteniendo un orden de llegada basado en los niveles.\\ 
+            Su coste en tiempo es de O(b\textsuperscript{d}), donde b es el factor de ramificación y d es la profundidad del nodo más cercano del árbol y su coste en espacio es de O(b\textsuperscript{d}), ya que debe almacenar todos los nodos del nivel actual antes de pasar al siguiente.\\
           }
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del BFS]
@@ -172,17 +170,10 @@ while not queue.isEmpty():    # Mientras haya elementos en la cola
       \clearpage\section{UCS - Uniform Cost Search}
         \subsection*{Descripción}
           \paragraph*{}{
-            UCS o Uniform Cost Search es un algoritmo de búsqueda no informado que se basa en la exploración de todos los nodos de un grafo siguiendo un orden de coste, es decir, se visitan los nodos con menor coste antes que los nodos con mayor coste.\\
-            Este algoritmo se implementa mediante una cola de prioridad, en la que se van almacenando los nodos a visitar.\\
-            Su coste en tiempo es de O(b\textsuperscript{m}), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
-            Su coste en espacio es de O(bm), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
-          }
-        \subsection*{Primera implementación}
-          \paragraph*{}{
-
+            UCS o Uniform Cost Search es un algoritmo de búsqueda no informada que expande los nodos en función del costo acumulado. En contrario al BFS que prioriza la profundidad de los nodos el UCS utiliza la cola de prioridad para ordenar los nodos dependiendo su costo acumulado y expande primero el nodo con menor costo, obteniendo así una solución óptima en términos de costo.\\  
+            El coste en tiempo del UCS es de \( O(b^{1 +\frac{ C^*}{\varepsilon}}) \), donde b es el factor de ramificación, C* es el costo de la solución óptima y \( \varepsilon \)  es el menor costo de transición entre nodos. Su coste de espacio es así mismo \( O(b^{1 +\frac{ C^*}{\varepsilon}}) \) ya que debe de almacenar todos los nodos en la cola de prioridad hasta encontrar la solución óptima \\
           }
         \subsection*{Implementación Final}
-          \paragraph*{}{
             \begin{lstlisting}[language=Python, caption=Implementación final del UCS]
 def uniformCostSearch(problem):
 """
@@ -207,7 +198,6 @@ while not queue.isEmpty():    # Mientras haya elementos en el stack
             camino = nodo_actual[1] + [accion]
             queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo)
             \end{lstlisting}
-          }
         \subsection*{Comentarios}
           \paragraph*{}{
 
@@ -216,18 +206,36 @@ while not queue.isEmpty():    # Mientras haya elementos en el stack
       \section{A*}
         \subsection*{Descripción}
           \paragraph*{}{
-
-          }
-        \subsection*{Primera implementación}
-          \paragraph*{}{
-
+            El A* es un algoritmo de búsqueda informada que utiliza las ventajas del UCS y Greedy Best-First Search, utilizando una función heurística para guiar la búsqueda hacia el objetivo de una manera más eficiente. A* expande los nodos en mediante una función de costo total. Donde f(n) = g(n) + h(n), g(n) siendo el costo acumulado desde el nodo inicial hasta n y h(n) es una estimación heurística del costo n hasta el objetivo. Este algoritmo se implementa mediante una cola de prioridad , donde los nodos se ordenan según su valor f(n) y se expande primero el nodo con menor valor f(n).\\
+            Su coste en tiempo es de O(b\textsuperscript{d}), donde b es el factor de ramificación y d es la profundidad de la solución óptima, sin embargo el tiempo puede reducirse si la heurística es eficiente. Así mismo su coste de espacio es de  O(b\textsuperscript{d}), ya que se debe de almacenar todos los nodos generados en la cola de prioridad para asegurar la solución óptima.
           }
         \subsection*{Implementación Final}
-          \paragraph*{}{
+          \begin{lstlisting}[language=Python, caption=Implementación final del A*]
+def aStarSearch(problem, heuristic=nullHeuristic):
+"""
+Implementacion del algoritmo de busqueda A*.
 
-          }
+Args:
+    problem (SearchProblem): Problema de busqueda
+    heuristic (function): Heuristica para el problema
+Returns:
+    list: Lista de acciones para llegar al objetivo
+"""
+queue = util.PriorityQueue()  # Añadir el nodo inicial a el heap
+queue.push([problem.getStartState(), [], 0], 0)
+visited = set()     # Conjunto para almacenar los nodos visitados
+
+while not queue.isEmpty():    # Mientras haya elementos en el stack
+    nodo_actual = queue.pop()   # Sacar el último elemento de la pila
+    if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+        return nodo_actual[1]  # Devolver el camino
+    if nodo_actual[0] not in visited:
+        visited.add(nodo_actual[0])
+        for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
+            camino = nodo_actual[1] + [accion]
+            queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo + heuristic(estado, problem))        
+          \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
-
           }
 \end{document}

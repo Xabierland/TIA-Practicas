@@ -162,10 +162,28 @@ def nullHeuristic(state, problem=None):
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    """
+    Implementacion del algoritmo de busqueda A*.
+    
+    Args:
+        problem (SearchProblem): Problema de busqueda
+        heuristic (function): Heuristica para el problema
+    Returns:
+        list: Lista de acciones para llegar al objetivo
+    """
+    queue = util.PriorityQueue()  # Añadir el nodo inicial a el heap
+    queue.push([problem.getStartState(), [], 0], 0)
+    visited = set()     # Conjunto para almacenar los nodos visitados
+    
+    while not queue.isEmpty():    # Mientras haya elementos en el stack
+        nodo_actual = queue.pop()   # Sacar el último elemento de la pila
+        if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+            return nodo_actual[1]  # Devolver el camino
+        if nodo_actual[0] not in visited:
+            visited.add(nodo_actual[0])
+            for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
+                camino = nodo_actual[1] + [accion]
+                queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo + heuristic(estado, problem))
 
 # Abbreviations
 bfs = breadthFirstSearch
