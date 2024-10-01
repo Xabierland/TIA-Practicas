@@ -160,6 +160,17 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def manhattanHeuristic(state, problem):
+    """
+    Heuristica de Manhattan.
+    
+    Args:
+        state (tuple): Coordenadas del estado
+        problem (SearchProblem): Problema de busqueda
+    Returns:
+        int: Distancia de Manhattan al objetivo
+    """
+    return util.manhattanDistance(state, problem.goal)
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """
