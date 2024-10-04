@@ -59,6 +59,7 @@
         \Large Autor(es):\\
         \vspace{0.2cm}
         \large Xabier Gabiña\\
+        \large Diego Montoya\\
         \vfill
         \today
     \end{titlepage}
@@ -71,7 +72,7 @@
 
         A lo largo de este documento, se presentarán las implementaciones de cada uno de estos algoritmos, junto con una descripción detallada de su funcionamiento y análisis de su rendimiento. Se incluirán ejemplos prácticos y se discutirán los resultados obtenidos en diferentes escenarios de búsqueda. El objetivo es proporcionar una visión completa y comprensiva de cómo estos algoritmos pueden ser aplicados en la resolución de problemas de búsqueda en inteligencia artificial.\\
       }
-    \chapter{Algoritmos no informados}
+    \chapter{Ejercicios}
       \section{DFS - Depth First Search}
         \subsection*{Descripción}
           \paragraph*{}{
@@ -82,54 +83,54 @@
           }  
         \subsection*{Primera implementación}
           \begin{lstlisting}[language=Python, caption=Implementación final del DFS]
-def depthFirstSearch(problem):
-"""
-Implementación del algoritmo de búsqueda en profundidad.
+  def depthFirstSearch(problem):
+  """
+  Implementación del algoritmo de búsqueda en profundidad.
 
-Args:
-    problem (SearchProblem): Problema de búsqueda
-Returns:
-    list: Lista de acciones para llegar al objetivo
-"""
-  stack = [problem] # Pila para almacenar los nodos a visitar
-  visited = set()     # Conjunto para almacenar los nodos visitados
-  path = []           # Lista para almacenar el camino al nodo objetivo
+  Args:
+      problem (SearchProblem): Problema de búsqueda
+  Returns:
+      list: Lista de acciones para llegar al objetivo
+  """
+    stack = [problem] # Pila para almacenar los nodos a visitar
+    visited = set()     # Conjunto para almacenar los nodos visitados
+    path = []           # Lista para almacenar el camino al nodo objetivo
 
-  while stack:    # Mientras haya elementos en el stack
-      nodo_actual = stack.pop()   # Sacar el último elemento de la pila
-      if nodo_actual in visited:  # Si el nodo actual ya ha sido visitado
-          continue
-      visited.add(nodo_actual)   # Marcar el nodo actual como visitado
-      path.append(nodo_actual.contenido)  # Añadir el nodo actual al camino
-      if nodo_actual.isGoalState():  # Si el nodo actual es el objetivo
-          return path
-      for hijo in reversed(nodo_actual.getSuccesor()): # Añadir los hijos del nodo actual a la pila
-          stack.append(hijo)
+    while stack:    # Mientras haya elementos en el stack
+        nodo_actual = stack.pop()   # Sacar el último elemento de la pila
+        if nodo_actual in visited:  # Si el nodo actual ya ha sido visitado
+            continue
+        visited.add(nodo_actual)   # Marcar el nodo actual como visitado
+        path.append(nodo_actual.contenido)  # Añadir el nodo actual al camino
+        if nodo_actual.isGoalState():  # Si el nodo actual es el objetivo
+            return path
+        for hijo in reversed(nodo_actual.getSuccesor()): # Añadir los hijos del nodo actual a la pila
+            stack.append(hijo)
           \end{lstlisting}
         \clearpage\subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del DFS]
-def depthFirstSearch(problem):
-"""
-Implementación del algoritmo de búsqueda en profundidad.
+  def depthFirstSearch(problem):
+  """
+  Implementación del algoritmo de búsqueda en profundidad.
 
-Args:
-    problem (SearchProblem): Problema de búsqueda
-Returns:
-    list: Lista de acciones para llegar al objetivo
-"""
-stack = util.Stack()  # Añadir el nodo inicial a la pila
-stack.push([problem.getStartState(), []])
-visited = set()  # Conjunto para almacenar los nodos visitados
+  Args:
+      problem (SearchProblem): Problema de búsqueda
+  Returns:
+      list: Lista de acciones para llegar al objetivo
+  """
+  stack = util.Stack()  # Añadir el nodo inicial a la pila
+  stack.push([problem.getStartState(), []])
+  visited = set()  # Conjunto para almacenar los nodos visitados
 
-while not stack.isEmpty():  # Mientras haya elementos en el stack
-    nodo_actual = stack.pop()  # Sacar el último elemento de la pila
-    if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
-        return nodo_actual[1]  # Devolver el camino
-    if nodo_actual[0] not in visited:
-        visited.add(nodo_actual[0])
-        for estado, accion, costo in reversed(problem.getSuccessors(nodo_actual[0])): 
-            camino = nodo_actual[1] + [accion]
-            stack.push([estado, camino])
+  while not stack.isEmpty():  # Mientras haya elementos en el stack
+      nodo_actual = stack.pop()  # Sacar el último elemento de la pila
+      if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+          return nodo_actual[1]  # Devolver el camino
+      if nodo_actual[0] not in visited:
+          visited.add(nodo_actual[0])
+          for estado, accion, costo in reversed(problem.getSuccessors(nodo_actual[0])): 
+              camino = nodo_actual[1] + [accion]
+              stack.push([estado, camino])
           \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
@@ -138,33 +139,33 @@ while not stack.isEmpty():  # Mientras haya elementos en el stack
       \clearpage\section{BFS - Breadth First Search}
         \subsection*{Descripción}
           \paragraph*{}{
-            BFS o Breath First Search es un algoritmo de búsqueda no informado que se basa en la exploración de todos los nodos de un grafo nivel por nivel. Este algoritmo se implementa mediante una cola en la que se van almacenando los nodos que se deben visitar, manteniendo un orden de llegada basado en los niveles.\\ 
+            BFS o Breadth First Search es un algoritmo de búsqueda no informado que se basa en la exploración de todos los nodos de un grafo nivel por nivel. Este algoritmo se implementa mediante una cola en la que se van almacenando los nodos que se deben visitar, manteniendo un orden de llegada basado en los niveles.\\ 
             Su coste en tiempo es de O(b\textsuperscript{d}), donde b es el factor de ramificación y d es la profundidad del nodo más cercano del árbol y su coste en espacio es de O(b\textsuperscript{d}), ya que debe almacenar todos los nodos del nivel actual antes de pasar al siguiente.\\
           }
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del BFS]
-def breadthFirstSearch(problem):
-"""
-Implementacion del algoritmo de busqueda en anchura.
+  def breadthFirstSearch(problem):
+  """
+  Implementacion del algoritmo de busqueda en anchura.
 
-Args:
-    problem (SearchProblem): Problema de busqueda
-Returns:
-    list: Lista de acciones para llegar al objetivo
-"""
-queue = util.Queue()  # Añadir el nodo inicial a la cola
-queue.push([problem.getStartState(), []])
-visited = set()     # Conjunto para almacenar los nodos visitados
+  Args:
+      problem (SearchProblem): Problema de busqueda
+  Returns:
+      list: Lista de acciones para llegar al objetivo
+  """
+  queue = util.Queue()  # Añadir el nodo inicial a la cola
+  queue.push([problem.getStartState(), []])
+  visited = set()     # Conjunto para almacenar los nodos visitados
 
-while not queue.isEmpty():    # Mientras haya elementos en la cola
-    nodo_actual = queue.pop()   # Sacar el primer elemento de la cola
-    if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
-        return nodo_actual[1]  # Devolver el camino
-    if nodo_actual[0] not in visited:
-        visited.add(nodo_actual[0])
-        for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la cola
-            camino = nodo_actual[1] + [accion]
-            queue.push([estado, camino])
+  while not queue.isEmpty():    # Mientras haya elementos en la cola
+      nodo_actual = queue.pop()   # Sacar el primer elemento de la cola
+      if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+          return nodo_actual[1]  # Devolver el camino
+      if nodo_actual[0] not in visited:
+          visited.add(nodo_actual[0])
+          for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la cola
+              camino = nodo_actual[1] + [accion]
+              queue.push([estado, camino])
           \end{lstlisting}
         \subsection*{Comentarios}
       \clearpage\section{UCS - Uniform Cost Search}
@@ -174,7 +175,7 @@ while not queue.isEmpty():    # Mientras haya elementos en la cola
             El coste en tiempo del UCS es de \( O(b^{1 +\frac{ C^*}{\varepsilon}}) \), donde b es el factor de ramificación, C* es el costo de la solución óptima y \( \varepsilon \)  es el menor costo de transición entre nodos. Su coste de espacio es así mismo \( O(b^{1 +\frac{ C^*}{\varepsilon}}) \) ya que debe de almacenar todos los nodos en la cola de prioridad hasta encontrar la solución óptima \\
           }
         \subsection*{Implementación Final}
-            \begin{lstlisting}[language=Python, caption=Implementación final del UCS]
+          \begin{lstlisting}[language=Python, caption=Implementación final del UCS]
 def uniformCostSearch(problem):
 """
 Implementacion del algoritmo de busqueda de coste uniforme.
@@ -197,13 +198,12 @@ while not queue.isEmpty():    # Mientras haya elementos en el stack
         for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
             camino = nodo_actual[1] + [accion]
             queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo)
-            \end{lstlisting}
+          \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
 
           }
-    \chapter{Algoritmos informados}
-      \section{A*}
+      \clearpage\section{A* Search}
         \subsection*{Descripción}
           \paragraph*{}{
             El A* es un algoritmo de búsqueda informada que utiliza las ventajas del UCS y Greedy Best-First Search, utilizando una función heurística para guiar la búsqueda hacia el objetivo de una manera más eficiente. A* expande los nodos en mediante una función de costo total. Donde f(n) = g(n) + h(n), g(n) siendo el costo acumulado desde el nodo inicial hasta n y h(n) es una estimación heurística del costo n hasta el objetivo. Este algoritmo se implementa mediante una cola de prioridad , donde los nodos se ordenan según su valor f(n) y se expande primero el nodo con menor valor f(n).\\
@@ -211,33 +211,285 @@ while not queue.isEmpty():    # Mientras haya elementos en el stack
           }
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del A*]
-def aStarSearch(problem, heuristic=nullHeuristic):
-"""
-Implementacion del algoritmo de busqueda A*.
+  def manhattanHeuristic(state, problem):
+      """
+      Heuristica de Manhattan.
+      
+      Args:
+          state (tuple): Coordenadas del estado
+          problem (SearchProblem): Problema de busqueda
+      Returns:
+          int: Distancia de Manhattan al objetivo
+      """
+      return util.manhattanDistance(state, problem.goal)
 
-Args:
-    problem (SearchProblem): Problema de busqueda
-    heuristic (function): Heuristica para el problema
-Returns:
-    list: Lista de acciones para llegar al objetivo
-"""
-queue = util.PriorityQueue()  # Añadir el nodo inicial a el heap
-queue.push([problem.getStartState(), [], 0], 0)
-visited = set()     # Conjunto para almacenar los nodos visitados
+  def aStarSearch(problem, heuristic=nullHeuristic):
+  """
+  Implementacion del algoritmo de busqueda A*.
 
-while not queue.isEmpty():    # Mientras haya elementos en el stack
-    nodo_actual = queue.pop()   # Sacar el último elemento de la pila
-    if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
-        return nodo_actual[1]  # Devolver el camino
-    if nodo_actual[0] not in visited:
-        visited.add(nodo_actual[0])
-        for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
-            camino = nodo_actual[1] + [accion]
-            queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo + heuristic(estado, problem))        
+  Args:
+      problem (SearchProblem): Problema de busqueda
+      heuristic (function): Heuristica para el problema
+  Returns:
+      list: Lista de acciones para llegar al objetivo
+  """
+  queue = util.PriorityQueue()  # Añadir el nodo inicial a el heap
+  queue.push([problem.getStartState(), [], 0], 0)
+  visited = set()     # Conjunto para almacenar los nodos visitados
+
+  while not queue.isEmpty():    # Mientras haya elementos en el stack
+      nodo_actual = queue.pop()   # Sacar el último elemento de la pila
+      if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+          return nodo_actual[1]  # Devolver el camino
+      if nodo_actual[0] not in visited:
+          visited.add(nodo_actual[0])
+          for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
+              camino = nodo_actual[1] + [accion]
+              queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo + heuristic(estado, problem))        
           \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
           }
+      \clearpage\section{Corners Problem: Representación}
+        \subsection*{Descripción}
+        \subsection*{Primera implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación inicial del problema de las esquinas]
+class CornersProblem(search.SearchProblem):
+  """
+  This search problem finds paths through all four corners of a layout.
+
+  You must select a suitable state space and successor function
+  """
+
+  def __init__(self, startingGameState):
+      """
+      Stores the walls, pacman's starting position and corners.
+      """
+      self.walls = startingGameState.getWalls()
+      self.startingPosition = startingGameState.getPacmanPosition()
+      top, right = self.walls.height - 2, self.walls.width - 2
+      self.corners = ((1, 1), (1, top), (right, 1), (right, top))
+      for corner in self.corners:
+          if not startingGameState.hasFood(*corner):
+              print('Warning: no food in corner ' + str(corner))
+      self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
+      # Please add any code here which you would like to use
+      # in initializing the problem
+              
+  def getStartState(self):
+      return self.startingPosition
+
+  def isGoalState(self, state):
+      """
+      Returns whether this search state is a goal state of the problem.
+      """
+      if state in self.corners:
+          self.explored.add(state)
+      if len(self.explored) == 4:
+          return True
+      return False
+
+  def getSuccessors(self, state):
+      """
+      Returns successor states, the actions they require, and a cost of 1.
+
+        As noted in search.py:
+          For a given state, this should return a list of triples, (successor,
+          action, stepCost), where 'successor' is a successor to the current
+          state, 'action' is the action required to get there, and 'stepCost'
+          is the incremental cost of expanding to that successor
+      """
+
+      successors = []
+      for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+          x, y = state
+          dx, dy = Actions.directionToVector(action)
+          nextx, nexty = int(x + dx), int(y + dy)
+          if not self.walls[nextx][nexty]:
+              nextState = (nextx, nexty)
+              cost = self.costFn(nextState)
+              successors.append((nextState, action, cost))
+
+      self._expanded += 1  # DO NOT CHANGE
+      return successors
+
+  def getCostOfActions(self, actions):
+      """
+      Returns the cost of a particular sequence of actions.  If those actions
+      include an illegal move, return 999999.  This is implemented for you.
+      """
+      if actions is None: return 999999
+      x, y = self.startingPosition
+      for action in actions:
+          dx, dy = Actions.directionToVector(action)
+          x, y = int(x + dx), int(y + dy)
+          if self.walls[x][y]: return 999999
+      return len(actions)
+          \end{lstlisting}
+        \subsection*{Implementación Final}
+          \begin{lstlisting}[language=Python, caption=Implementación final del problema de las esquinas]
+class CornersProblem(search.SearchProblem):
+  """
+  This search problem finds paths through all four corners of a layout.
+
+  You must select a suitable state space and successor function
+  """
+
+  def __init__(self, startingGameState):
+      """
+      Stores the walls, pacman's starting position and corners.
+      """
+      self.walls = startingGameState.getWalls()
+      self.startingPosition = startingGameState.getPacmanPosition()
+      top, right = self.walls.height - 2, self.walls.width - 2
+      self.corners = ((1, 1), (1, top), (right, 1), (right, top))
+      for corner in self.corners:
+          if not startingGameState.hasFood(*corner):
+              print('Warning: no food in corner ' + str(corner))
+      self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
+      # Please add any code here which you would like to use
+      # in initializing the problem
+              
+  def getStartState(self):
+      """
+      Returns the start state, including the initial position and the visited corners.
+      """
+      # The start state now includes an empty set of visited corners
+      return (self.startingPosition, ())
+
+  def isGoalState(self, state):
+      """
+      Returns whether this search state is a goal state of the problem.
+      """
+      # Unpack the state
+      position, visitedCorners = state
+
+      # Check if we have visited all four corners
+      return len(visitedCorners) == 4
+
+  def getSuccessors(self, state):
+      """
+      Returns successor states, the actions they require, and a cost of 1.
+      """
+      successors = []
+      # Unpack the current state
+      currentPosition, visitedCorners = state
+
+      for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+          x, y = currentPosition
+          dx, dy = Actions.directionToVector(action)
+          nextx, nexty = int(x + dx), int(y + dy)
+
+          # Check if the next position is a wall
+          if not self.walls[nextx][nexty]:
+              nextPosition = (nextx, nexty)
+              # Check if we have reached a new corner
+              newVisitedCorners = list(visitedCorners)
+              if nextPosition in self.corners and nextPosition not in visitedCorners:
+                  newVisitedCorners.append(nextPosition)
+
+              # Create a new state with updated corner list
+              nextState = (nextPosition, tuple(newVisitedCorners))
+              cost = 1  # Step cost is always 1
+              successors.append((nextState, action, cost))
+
+      self._expanded += 1  # DO NOT CHANGE
+      return successors
+
+  def getCostOfActions(self, actions):
+      """
+      Returns the cost of a particular sequence of actions.  If those actions
+      include an illegal move, return 999999.  This is implemented for you.
+      """
+      if actions is None: return 999999
+      x, y = self.startingPosition
+      for action in actions:
+          dx, dy = Actions.directionToVector(action)
+          x, y = int(x + dx), int(y + dy)
+          if self.walls[x][y]: return 999999
+      return len(actions)        
+          \end{lstlisting}
+        \subsection*{Comentarios}
+      \clearpage\section{Corners Problem: Heurística}
+        \subsection*{Descripción}
+        \subsection*{Primera implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación inicial de la heurística del problema de las esquinas]
+          \end{lstlisting}
+        \subsection*{Implementación Final}
+          \begin{lstlisting}[language=Python, caption=Implementación final de la heurística del problema de las esquinas]
+def cornersHeuristic(state, problem):
+  """
+  A heuristic for the CornersProblem that you defined.
+
+    state:   The current search state (currentPosition, visitedCorners)
+    problem: The CornersProblem instance for this layout.
+  """
+  currentPosition, visitedCorners = state
+  corners = problem.corners
+
+  # Identificar las esquinas que aún no han sido visitadas
+  unvisitedCorners = [corner for corner in corners if corner not in visitedCorners]
+
+  # Si no hay esquinas por visitar, la heurística es 0
+  if not unvisitedCorners:
+      return 0
+
+  # Calcular la distancia mínima utilizando la distancia Manhattan
+  heuristic = 0
+  current = currentPosition
+
+  while unvisitedCorners:
+      # Encontrar la esquina más cercana (distancia Manhattan)
+      distances = [(util.manhattanDistance(current, corner), corner) for corner in unvisitedCorners]
+      minDistance, closestCorner = min(distances)
+      
+      # Agregar la distancia mínima a la heurística y moverse a la siguiente esquina
+      heuristic += minDistance
+      current = closestCorner
+      unvisitedCorners.remove(closestCorner)
+
+  return heuristic
+          \end{lstlisting}
+        \subsection*{Comentarios}
+      \clearpage\section{Eating All The Dots: Heurística}
+        \subsection*{Descripción}
+        \subsection*{Primera implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación inicial de la heurística del problema de las esquinas]
+          \end{lstlisting}
+        \subsection*{Implementación Final}
+          \begin{lstlisting}[language=Python, caption=Implementación final de la heurística del problema de las esquinas]
+def foodHeuristic(state, problem):
+  """
+  A heuristic for the FoodSearchProblem.
+  
+  state: (pacmanPosition, foodGrid)
+  problem: The FoodSearchProblem instance.
+  """
+  position, foodGrid = state
+
+  # Convert foodGrid to a list of food positions
+  foodList = foodGrid.asList()
+
+  # Si no hay comida restante, la heurística es 0
+  if not foodList:
+      return 0
+
+  # Calcular la distancia de laberinto a cada punto de comida desde la posición actual de Pacman
+  distances = [mazeDistance(position, food, problem.startingGameState) for food in foodList]
+
+  # La heurística es la distancia máxima a cualquier punto de comida
+  return max(distances)
+          \end{lstlisting}
+        \subsection*{Comentarios}
+      \clearpage\section{Suboptimal Search}
+        \subsection*{Descripción}
+        \subsection*{Primera implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación inicial del problema de las esquinas]
+          \end{lstlisting}
+        \subsection*{Implementación Final}
+          \begin{lstlisting}[language=Python, caption=Implementación final del problema de las esquinas]
+          \end{lstlisting}
+        \subsection*{Comentarios}
     \chapter{Resultados}
       \section{Casos de pruebas}
       \section{Autograder}
