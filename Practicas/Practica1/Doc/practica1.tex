@@ -40,6 +40,10 @@
 
 \titlespacing*{\chapter}{0pt}{-50pt}{20pt}
 
+% Personalización del índice de listados
+\renewcommand{\lstlistingname}{Código}  % Cambiar el nombre de "Listing" a "Código"
+\renewcommand{\lstlistlistingname}{Índice de Listados}
+
 % Añade numeración a los subsubsections y los añade al índice
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
@@ -64,6 +68,7 @@
         \today
     \end{titlepage}
     \tableofcontents
+    \lstlistoflistings
     \chapter{Introducción}
       {
         En el marco de la asignatura de Técnicas de Inteligencia Artificial, se nos ha propuesto implementar y analizar diversos algoritmos de búsqueda aplicados al contexto de un proyecto académico desarrollado por la Universidad de Berkeley, basado en el clásico juego Pacman. El objetivo principal de esta práctica es profundizar en el funcionamiento de diferentes estrategias de búsqueda, estudiando su eficiencia y comportamiento en diferentes escenarios.\\
@@ -82,59 +87,62 @@
             Su coste en espacio es de O(bm), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
           }  
         \subsection*{Primera implementación}
-          \begin{lstlisting}[language=Python, caption=Implementación final del DFS]
+          \begin{lstlisting}[language=Python, caption=Implementación inicial del DFS]
   def depthFirstSearch(problem):
-  """
-  Implementación del algoritmo de búsqueda en profundidad.
+    """
+    Implementación del algoritmo de búsqueda en profundidad.
 
-  Args:
-      problem (SearchProblem): Problema de búsqueda
-  Returns:
-      list: Lista de acciones para llegar al objetivo
-  """
-    stack = [problem] # Pila para almacenar los nodos a visitar
-    visited = set()     # Conjunto para almacenar los nodos visitados
-    path = []           # Lista para almacenar el camino al nodo objetivo
+    Args:
+        problem (SearchProblem): Problema de búsqueda
+    Returns:
+        list: Lista de acciones para llegar al objetivo
+    """
+      stack = [problem] # Pila para almacenar los nodos a visitar
+      visited = set()     # Conjunto para almacenar los nodos visitados
+      path = []           # Lista para almacenar el camino al nodo objetivo
 
-    while stack:    # Mientras haya elementos en el stack
-        nodo_actual = stack.pop()   # Sacar el último elemento de la pila
-        if nodo_actual in visited:  # Si el nodo actual ya ha sido visitado
-            continue
-        visited.add(nodo_actual)   # Marcar el nodo actual como visitado
-        path.append(nodo_actual.contenido)  # Añadir el nodo actual al camino
-        if nodo_actual.isGoalState():  # Si el nodo actual es el objetivo
-            return path
-        for hijo in reversed(nodo_actual.getSuccesor()): # Añadir los hijos del nodo actual a la pila
-            stack.append(hijo)
+      while stack:    # Mientras haya elementos en el stack
+          nodo_actual = stack.pop()   # Sacar el último elemento de la pila
+          if nodo_actual in visited:  # Si el nodo actual ya ha sido visitado
+              continue
+          visited.add(nodo_actual)   # Marcar el nodo actual como visitado
+          path.append(nodo_actual.contenido)  # Añadir el nodo actual al camino
+          if nodo_actual.isGoalState():  # Si el nodo actual es el objetivo
+              return path
+          for hijo in reversed(nodo_actual.getSuccesor()): # Añadir los hijos del nodo actual a la pila
+              stack.append(hijo)
           \end{lstlisting}
         \clearpage\subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del DFS]
   def depthFirstSearch(problem):
-  """
-  Implementación del algoritmo de búsqueda en profundidad.
+    """
+    Implementación del algoritmo de búsqueda en profundidad.
 
-  Args:
-      problem (SearchProblem): Problema de búsqueda
-  Returns:
-      list: Lista de acciones para llegar al objetivo
-  """
-  stack = util.Stack()  # Añadir el nodo inicial a la pila
-  stack.push([problem.getStartState(), []])
-  visited = set()  # Conjunto para almacenar los nodos visitados
+    Args:
+        problem (SearchProblem): Problema de búsqueda
+    Returns:
+        list: Lista de acciones para llegar al objetivo
+    """
+    stack = util.Stack()  # Añadir el nodo inicial a la pila
+    stack.push([problem.getStartState(), []])
+    visited = set()  # Conjunto para almacenar los nodos visitados
 
-  while not stack.isEmpty():  # Mientras haya elementos en el stack
-      nodo_actual = stack.pop()  # Sacar el último elemento de la pila
-      if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
-          return nodo_actual[1]  # Devolver el camino
-      if nodo_actual[0] not in visited:
-          visited.add(nodo_actual[0])
-          for estado, accion, costo in reversed(problem.getSuccessors(nodo_actual[0])): 
-              camino = nodo_actual[1] + [accion]
-              stack.push([estado, camino])
+    while not stack.isEmpty():  # Mientras haya elementos en el stack
+        nodo_actual = stack.pop()  # Sacar el último elemento de la pila
+        if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+            return nodo_actual[1]  # Devolver el camino
+        if nodo_actual[0] not in visited:
+            visited.add(nodo_actual[0])
+            for estado, accion, costo in reversed(problem.getSuccessors(nodo_actual[0])): 
+                camino = nodo_actual[1] + [accion]
+                stack.push([estado, camino])
           \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
-
+            En la implementación inicial del algoritmo DFS, la implementacion de la lista del path es incorrecta por dos motivos. 
+            El primero, es que se añade el nodo actual al path y no la accion que se ha de tomar para llegar a la meta.
+            La segunda, es que se añaden todos los nodos visitados al path en orden de visita lo que hace que si llegamos a una hoja final se crea un salto en el path que seria imposible de realizar.\\
+            Ambos problemas se han solucionado en la implementación final del algoritmo DFS.\\
           }
       \clearpage\section{BFS - Breadth First Search}
         \subsection*{Descripción}
@@ -145,29 +153,32 @@
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del BFS]
   def breadthFirstSearch(problem):
-  """
-  Implementacion del algoritmo de busqueda en anchura.
+    """
+    Implementacion del algoritmo de busqueda en anchura.
 
-  Args:
-      problem (SearchProblem): Problema de busqueda
-  Returns:
-      list: Lista de acciones para llegar al objetivo
-  """
-  queue = util.Queue()  # Añadir el nodo inicial a la cola
-  queue.push([problem.getStartState(), []])
-  visited = set()     # Conjunto para almacenar los nodos visitados
+    Args:
+        problem (SearchProblem): Problema de busqueda
+    Returns:
+        list: Lista de acciones para llegar al objetivo
+    """
+    queue = util.Queue()  # Añadir el nodo inicial a la cola
+    queue.push([problem.getStartState(), []])
+    visited = set()     # Conjunto para almacenar los nodos visitados
 
-  while not queue.isEmpty():    # Mientras haya elementos en la cola
-      nodo_actual = queue.pop()   # Sacar el primer elemento de la cola
-      if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
-          return nodo_actual[1]  # Devolver el camino
-      if nodo_actual[0] not in visited:
-          visited.add(nodo_actual[0])
-          for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la cola
-              camino = nodo_actual[1] + [accion]
-              queue.push([estado, camino])
+    while not queue.isEmpty():    # Mientras haya elementos en la cola
+        nodo_actual = queue.pop()   # Sacar el primer elemento de la cola
+        if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+            return nodo_actual[1]  # Devolver el camino
+        if nodo_actual[0] not in visited:
+            visited.add(nodo_actual[0])
+            for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la cola
+                camino = nodo_actual[1] + [accion]
+                queue.push([estado, camino])
           \end{lstlisting}
         \subsection*{Comentarios}
+          \paragraph*{}{
+            Este algoritmo ha tenido una sencilla implementación, ya que las dos unicas diferencias con el caso anterior es el cambio de la pila por una cola y que al añadir los nodos no es necesario hacerlo en el orden inverso ya que la cola mantiene el orden de llegada.\\
+          }
       \clearpage\section{UCS - Uniform Cost Search}
         \subsection*{Descripción}
           \paragraph*{}{
@@ -177,31 +188,32 @@
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del UCS]
 def uniformCostSearch(problem):
-"""
-Implementacion del algoritmo de busqueda de coste uniforme.
+  """
+  Implementacion del algoritmo de busqueda de coste uniforme.
 
-Args:
-    problem (SearchProblem): Problema de busqueda
-Returns:
-    list: Lista de acciones para llegar al objetivo
-"""
-queue = util.PriorityQueue()  # Añadir el nodo inicial a el heap
-queue.push([problem.getStartState(), [], 0], 0)
-visited = set()     # Conjunto para almacenar los nodos visitados
+  Args:
+      problem (SearchProblem): Problema de busqueda
+  Returns:
+      list: Lista de acciones para llegar al objetivo
+  """
+  queue = util.PriorityQueue()  # Añadir el nodo inicial a el heap
+  queue.push([problem.getStartState(), [], 0], 0)
+  visited = set()     # Conjunto para almacenar los nodos visitados
 
-while not queue.isEmpty():    # Mientras haya elementos en el stack
-    nodo_actual = queue.pop()   # Sacar el último elemento de la pila
-    if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
-        return nodo_actual[1]  # Devolver el camino
-    if nodo_actual[0] not in visited:
-        visited.add(nodo_actual[0])
-        for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
-            camino = nodo_actual[1] + [accion]
-            queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo)
+  while not queue.isEmpty():    # Mientras haya elementos en el stack
+      nodo_actual = queue.pop()   # Sacar el último elemento de la pila
+      if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
+          return nodo_actual[1]  # Devolver el camino
+      if nodo_actual[0] not in visited:
+          visited.add(nodo_actual[0])
+          for estado, accion, costo in problem.getSuccessors(nodo_actual[0]): # Añadir los hijos del nodo actual a la pila
+              camino = nodo_actual[1] + [accion]
+              queue.push([estado, camino, nodo_actual[2] + costo], nodo_actual[2] + costo)
           \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
-
+            Al igual que en el caso anterior, en este, solo hemos necesitado hacer dos cambios.
+            El primero es que la cola pasa a ser una cola de prioridad y ligado a esto el metodo push de la misma requiere de un segundo argumento que es el valor de prioridad.
           }
       \clearpage\section{A* Search}
         \subsection*{Descripción}
@@ -211,19 +223,19 @@ while not queue.isEmpty():    # Mientras haya elementos en el stack
           }
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del A*]
-  def manhattanHeuristic(state, problem):
-      """
-      Heuristica de Manhattan.
-      
-      Args:
-          state (tuple): Coordenadas del estado
-          problem (SearchProblem): Problema de busqueda
-      Returns:
-          int: Distancia de Manhattan al objetivo
-      """
-      return util.manhattanDistance(state, problem.goal)
+def manhattanHeuristic(state, problem):
+  """
+  Heuristica de Manhattan.
+  
+  Args:
+      state (tuple): Coordenadas del estado
+      problem (SearchProblem): Problema de busqueda
+  Returns:
+      int: Distancia de Manhattan al objetivo
+  """
+  return util.manhattanDistance(state, problem.goal)
 
-  def aStarSearch(problem, heuristic=nullHeuristic):
+def aStarSearch(problem, heuristic=nullHeuristic):
   """
   Implementacion del algoritmo de busqueda A*.
 
@@ -249,6 +261,8 @@ while not queue.isEmpty():    # Mientras haya elementos en el stack
           \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
+            En este caso, la implementación del A* es muy similar a la del UCS, con la única diferencia de que se suma la heurística al valor de prioridad de la cola de prioridad.\\
+            El euristico utilizado en este caso es la distancia de Manhattan, que es la suma de las distancias horizontales y verticales entre dos puntos. Unicamente se ha tenido que añadir la función manhattanHeuristic que calcula la distancia de Manhattan entre dos puntos del archivo util.py.\\
           }
       \clearpage\section{Corners Problem: Representación}
         \subsection*{Descripción}
@@ -488,33 +502,379 @@ def foodHeuristic(state, problem):
           \end{lstlisting}
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del problema de las esquinas]
+class ClosestDotSearchAgent(SearchAgent):
+  """Search for all food using a sequence of searches"""
+
+  def registerInitialState(self, state):
+      """
+      El agente registra el estado inicial y sigue buscando el punto de comida más cercano
+      hasta que todos los puntos de comida hayan sido consumidos.
+      """
+      self.actions = []  # Almacena las acciones que tomará Pacman
+      currentState = state
+
+      # Repite mientras haya puntos de comida restantes
+      while currentState.getFood().count() > 0:
+          # Encuentra el camino hacia el punto de comida más cercano
+          nextPathSegment = self.findPathToClosestDot(currentState)
+          
+          # Añade estas acciones al plan del agente
+          self.actions += nextPathSegment
+
+          # Asegura que todas las acciones sean válidas
+          for action in nextPathSegment:
+              legal = currentState.getLegalActions()
+              if action not in legal:
+                  raise Exception(f'findPathToClosestDot returned an illegal move: {action}!\n{currentState}')
+              
+              # Genera el siguiente estado sucesor para Pacman
+              currentState = currentState.generateSuccessor(0, action)
+
+      self.actionIndex = 0
+      print(f'Path found with cost {len(self.actions)}.')
+
+  def findPathToClosestDot(self, gameState):
+      """
+      Devuelve una lista de acciones que llevan al punto de comida más cercano, comenzando desde el estado actual del juego.
+      """
+      # Define un problema de búsqueda para cualquier alimento disponible
+      problem = AnyFoodSearchProblem(gameState)
+
+      # Utiliza el algoritmo de búsqueda (BFS en este caso) para encontrar el camino más corto hacia el punto de comida más cercano
+      from search import breadthFirstSearch
+      return breadthFirstSearch(problem)
+
+
+class AnyFoodSearchProblem(PositionSearchProblem):
+  """
+  Un problema de búsqueda para encontrar un camino a cualquier punto de comida.
+  Este problema es similar a PositionSearchProblem, pero con un objetivo distinto: cualquier punto de comida.
+  """
+
+  def __init__(self, gameState):
+      """Almacena la información del estado de juego para su uso posterior."""
+      # Almacena los alimentos del estado de juego actual
+      self.food = gameState.getFood()
+
+      # Llama al constructor de PositionSearchProblem
+      super().__init__(gameState)
+      self.walls = gameState.getWalls()
+      self.startState = gameState.getPacmanPosition()
+      self.costFn = lambda x: 1  # El costo de cada acción es 1
+
+      # Variables de seguimiento (no es necesario modificar)
+      self._visited, self._visitedlist, self._expanded = {}, [], 0
+
+  def isGoalState(self, state):
+      """
+      Devuelve si el estado actual (la posición de Pacman) es un estado objetivo.
+      El estado es un objetivo si contiene un punto de comida.
+      """
+      x, y = state
+      # El estado es objetivo si hay comida en la posición actual de Pacman
+      return self.food[x][y]
           \end{lstlisting}
         \subsection*{Comentarios}
     \chapter{Resultados}
       \section{Casos de pruebas}
+        \subsection{DFS}
+          \begin{lstlisting}[language=Python, caption=Prueba DFS]
+python pacman.py -l tinyMaze -p SearchAgent -a fn=tinyMazeSearch
+[SearchAgent] using function tinyMazeSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 8 in 0.0 seconds
+Search nodes expanded: 0
+Pacman emerges victorious! Score: 502
+Average Score: 502.0
+Scores:        502.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l tinyMaze -p SearchAgent
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 8 in 0.0 seconds
+Search nodes expanded: 15
+Pacman emerges victorious! Score: 502
+Average Score: 502.0
+Scores:        502.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l mediumMaze -p SearchAgent
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 246 in 0.0 seconds
+Search nodes expanded: 269
+Pacman emerges victorious! Score: 264
+Average Score: 264.0
+Scores:        264.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l bigMaze -z .5 -p SearchAgent
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 210 in 0.0 seconds
+Search nodes expanded: 466
+Pacman emerges victorious! Score: 300
+Average Score: 300.0
+Scores:        300.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+          \end{lstlisting}
+        \clearpage\subsection{BFS}
+          \begin{lstlisting}[language=Python, caption=Prueba BFS]
+python pacman.py -l mediumMaze -p SearchAgent -a fn=bfs
+[SearchAgent] using function bfs
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 68 in 0.0 seconds
+Search nodes expanded: 269
+Pacman emerges victorious! Score: 442
+Average Score: 442.0
+Scores:        442.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=bfs
+[SearchAgent] using function bfs
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 210 in 0.0 seconds
+Search nodes expanded: 620
+Pacman emerges victorious! Score: 300
+Average Score: 300.0
+Scores:        300.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python eightpuzzle.py
+A random puzzle:
+-------------
+| 2 |   | 5 |
+-------------
+| 3 | 4 | 1 |
+-------------
+| 6 | 7 | 8 |
+-------------
+BFS found a path of 9 moves: ['left', 'down', 'right', 'right', 'up', 'left', 'down', 'left', 'up']
+After 1 move: left
+-------------
+|   | 2 | 5 |
+-------------
+| 3 | 4 | 1 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 2 moves: down
+-------------
+| 3 | 2 | 5 |
+-------------
+|   | 4 | 1 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 3 moves: right
+-------------
+| 3 | 2 | 5 |
+-------------
+| 4 |   | 1 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 4 moves: right
+-------------
+| 3 | 2 | 5 |
+-------------
+| 4 | 1 |   |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 5 moves: up
+-------------
+| 3 | 2 |   |
+-------------
+| 4 | 1 | 5 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 6 moves: left
+-------------
+| 3 |   | 2 |
+-------------
+| 4 | 1 | 5 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 7 moves: down
+-------------
+| 3 | 1 | 2 |
+-------------
+| 4 |   | 5 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 8 moves: left
+-------------
+| 3 | 1 | 2 |
+-------------
+|   | 4 | 5 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+After 9 moves: up
+-------------
+|   | 1 | 2 |
+-------------
+| 3 | 4 | 5 |
+-------------
+| 6 | 7 | 8 |
+-------------
+Press return for the next state...
+          \end{lstlisting}
+        \clearpage\subsection{UCS}
+          \begin{lstlisting}[language=Python, caption=Prueba UCS]
+python pacman.py -l mediumMaze -p SearchAgent -a fn=ucs
+[SearchAgent] using function ucs
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 68 in 0.0 seconds
+Search nodes expanded: 269
+Pacman emerges victorious! Score: 442
+Average Score: 442.0
+Scores:        442.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l mediumDottedMaze -p StayEastSearchAgent
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 1.000976583804004 in 0.0 seconds
+Search nodes expanded: 186
+Pacman emerges victorious! Score: 646
+Average Score: 646.0
+Scores:        646.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l mediumScaryMaze -p StayWestSearchAgent
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 68719479864 in 0.0 seconds
+Search nodes expanded: 108
+Pacman emerges victorious! Score: 418
+Average Score: 418.0
+Scores:        418.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+          \end{lstlisting}
+        \clearpage\subsection{A*}
+          \begin{lstlisting}[language=Python, caption=Prueba A*]
+python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
+[SearchAgent] using function astar and heuristic manhattanHeuristic
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 210 in 0.0 seconds
+Search nodes expanded: 549
+Pacman emerges victorious! Score: 300
+Average Score: 300.0
+Scores:        300.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+          \end{lstlisting}
+        \clearpage\subsection{Corners Problem: Representación}
+          \begin{lstlisting}[language=Python, caption=Prueba Representación Corners Problem]
+python pacman.py -l tinyCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+[SearchAgent] using function bfs
+[SearchAgent] using problem type CornersProblem
+Path found with total cost of 28 in 0.0 seconds
+Search nodes expanded: 435
+Pacman emerges victorious! Score: 512
+Average Score: 512.0
+Scores:        512.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+[SearchAgent] using function bfs
+[SearchAgent] using problem type CornersProblem
+Path found with total cost of 106 in 0.0 seconds
+Search nodes expanded: 2448
+Pacman emerges victorious! Score: 434
+Average Score: 434.0
+Scores:        434.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+          \end{lstlisting}
+        \clearpage\subsection{Corners Problem: Heurística}
+          \begin{lstlisting}[language=Python, caption=Prueba Heurística Corners Problem]
+python pacman.py -l mediumCorners -p AStarCornersAgent -z 0.5
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 106 in 0.0 seconds
+Search nodes expanded: 901
+Pacman emerges victorious! Score: 434
+Average Score: 434.0
+Scores:        434.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+          \end{lstlisting}
+        \clearpage\subsection{Eating All The Dots}
+          \begin{lstlisting}[language=Python, caption=Prueba Eating All The Dots]
+python pacman.py -l testSearch -p AStarFoodSearchAgent
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 7 in 0.0 seconds
+Search nodes expanded: 10
+Pacman emerges victorious! Score: 513
+Average Score: 513.0
+Scores:        513.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+python pacman.py -l trickySearch -p AStarFoodSearchAgent
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 60 in 17.1 seconds
+Search nodes expanded: 4137
+Pacman emerges victorious! Score: 570
+Average Score: 570.0
+Scores:        570.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+          \end{lstlisting}
+        \clearpage\subsection{Suboptimal Search}
+          \begin{lstlisting}[language=Python, caption=Prueba Suboptimal Search]
+python pacman.py -l bigSearch -p ClosestDotSearchAgent -z .5
+          \end{lstlisting}
       \section{Autograder}
           \begin{lstlisting}
-Starting on 10-1 at 17:38:32
+Starting on 10-6 at 13:02:51
 
 Question q1
 ===========
 
 *** PASS: test_cases/q1/graph_backtrack.test
-***     solution:               ['1:A->C', '0:C->G']
-***     expanded_states:        ['A', 'B', 'C']
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
 *** PASS: test_cases/q1/graph_bfs_vs_dfs.test
-***     solution:               ['0:A->B', '0:B->D', '0:D->G']
-***     expanded_states:        ['A', 'B', 'D']
+*** 	solution:		['0:A->B', '0:B->D', '0:D->G']
+*** 	expanded_states:	['A', 'B', 'D']
 *** PASS: test_cases/q1/graph_infinite.test
-***     solution:               ['0:A->B', '1:B->C', '1:C->G']
-***     expanded_states:        ['A', 'B', 'C']
+*** 	solution:		['0:A->B', '1:B->C', '1:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
 *** PASS: test_cases/q1/graph_manypaths.test
-***     solution:               ['0:A->B1', '0:B1->C', '0:C->D', '0:D->E1', '0:E1->F', '0:F->G']
-***     expanded_states:        ['A', 'B1', 'C', 'D', 'E1', 'F']
+*** 	solution:		['0:A->B1', '0:B1->C', '0:C->D', '0:D->E1', '0:E1->F', '0:F->G']
+*** 	expanded_states:	['A', 'B1', 'C', 'D', 'E1', 'F']
 *** PASS: test_cases/q1/pacman_1.test
-***     pacman layout:          mediumMaze
-***     solution length: 246
-***     nodes expanded:         269
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 246
+*** 	nodes expanded:		269
 
 ### Question q1: 3/3 ###
 
@@ -523,21 +883,21 @@ Question q2
 ===========
 
 *** PASS: test_cases/q2/graph_backtrack.test
-***     solution:               ['1:A->C', '0:C->G']
-***     expanded_states:        ['A', 'B', 'C', 'D']
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C', 'D']
 *** PASS: test_cases/q2/graph_bfs_vs_dfs.test
-***     solution:               ['1:A->G']
-***     expanded_states:        ['A', 'B']
+*** 	solution:		['1:A->G']
+*** 	expanded_states:	['A', 'B']
 *** PASS: test_cases/q2/graph_infinite.test
-***     solution:               ['0:A->B', '1:B->C', '1:C->G']
-***     expanded_states:        ['A', 'B', 'C']
+*** 	solution:		['0:A->B', '1:B->C', '1:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
 *** PASS: test_cases/q2/graph_manypaths.test
-***     solution:               ['1:A->C', '0:C->D', '1:D->F', '0:F->G']
-***     expanded_states:        ['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
+*** 	solution:		['1:A->C', '0:C->D', '1:D->F', '0:F->G']
+*** 	expanded_states:	['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
 *** PASS: test_cases/q2/pacman_1.test
-***     pacman layout:          mediumMaze
-***     solution length: 68
-***     nodes expanded:         269
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 68
+*** 	nodes expanded:		269
 
 ### Question q2: 3/3 ###
 
@@ -546,39 +906,39 @@ Question q3
 ===========
 
 *** PASS: test_cases/q3/graph_backtrack.test
-***     solution:               ['1:A->C', '0:C->G']
-***     expanded_states:        ['A', 'B', 'C', 'D']
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C', 'D']
 *** PASS: test_cases/q3/graph_bfs_vs_dfs.test
-***     solution:               ['1:A->G']
-***     expanded_states:        ['A', 'B']
+*** 	solution:		['1:A->G']
+*** 	expanded_states:	['A', 'B']
 *** PASS: test_cases/q3/graph_infinite.test
-***     solution:               ['0:A->B', '1:B->C', '1:C->G']
-***     expanded_states:        ['A', 'B', 'C']
+*** 	solution:		['0:A->B', '1:B->C', '1:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
 *** PASS: test_cases/q3/graph_manypaths.test
-***     solution:               ['1:A->C', '0:C->D', '1:D->F', '0:F->G']
-***     expanded_states:        ['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
+*** 	solution:		['1:A->C', '0:C->D', '1:D->F', '0:F->G']
+*** 	expanded_states:	['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
 *** PASS: test_cases/q3/ucs_0_graph.test
-***     solution:               ['Right', 'Down', 'Down']
-***     expanded_states:        ['A', 'B', 'D', 'C', 'G']
+*** 	solution:		['Right', 'Down', 'Down']
+*** 	expanded_states:	['A', 'B', 'D', 'C', 'G']
 *** PASS: test_cases/q3/ucs_1_problemC.test
-***     pacman layout:          mediumMaze
-***     solution length: 68
-***     nodes expanded:         269
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 68
+*** 	nodes expanded:		269
 *** PASS: test_cases/q3/ucs_2_problemE.test
-***     pacman layout:          mediumMaze
-***     solution length: 74
-***     nodes expanded:         260
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 74
+*** 	nodes expanded:		260
 *** PASS: test_cases/q3/ucs_3_problemW.test
-***     pacman layout:          mediumMaze
-***     solution length: 152
-***     nodes expanded:         173
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 152
+*** 	nodes expanded:		173
 *** PASS: test_cases/q3/ucs_4_testSearch.test
-***     pacman layout:          testSearch
-***     solution length: 7
-***     nodes expanded:         14
+*** 	pacman layout:		testSearch
+*** 	solution length: 7
+*** 	nodes expanded:		14
 *** PASS: test_cases/q3/ucs_5_goalAtDequeue.test
-***     solution:               ['1:A->B', '0:B->C', '0:C->G']
-***     expanded_states:        ['A', 'B', 'C']
+*** 	solution:		['1:A->B', '0:B->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
 
 ### Question q3: 3/3 ###
 
@@ -587,24 +947,24 @@ Question q4
 ===========
 
 *** PASS: test_cases/q4/astar_0.test
-***     solution:               ['Right', 'Down', 'Down']
-***     expanded_states:        ['A', 'B', 'D', 'C', 'G']
+*** 	solution:		['Right', 'Down', 'Down']
+*** 	expanded_states:	['A', 'B', 'D', 'C', 'G']
 *** PASS: test_cases/q4/astar_1_graph_heuristic.test
-***     solution:               ['0', '0', '2']
-***     expanded_states:        ['S', 'A', 'D', 'C']
+*** 	solution:		['0', '0', '2']
+*** 	expanded_states:	['S', 'A', 'D', 'C']
 *** PASS: test_cases/q4/astar_2_manhattan.test
-***     pacman layout:          mediumMaze
-***     solution length: 68
-***     nodes expanded:         221
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 68
+*** 	nodes expanded:		221
 *** PASS: test_cases/q4/astar_3_goalAtDequeue.test
-***     solution:               ['1:A->B', '0:B->C', '0:C->G']
-***     expanded_states:        ['A', 'B', 'C']
+*** 	solution:		['1:A->B', '0:B->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
 *** PASS: test_cases/q4/graph_backtrack.test
-***     solution:               ['1:A->C', '0:C->G']
-***     expanded_states:        ['A', 'B', 'C', 'D']
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C', 'D']
 *** PASS: test_cases/q4/graph_manypaths.test
-***     solution:               ['1:A->C', '0:C->D', '1:D->F', '0:F->G']
-***     expanded_states:        ['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
+*** 	solution:		['1:A->C', '0:C->D', '1:D->F', '0:F->G']
+*** 	expanded_states:	['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
 
 ### Question q4: 3/3 ###
 
@@ -612,30 +972,51 @@ Question q4
 Question q5
 ===========
 
-*** Method not implemented: getStartState at line 311 of searchAgents.py
-*** FAIL: Terminated with a string exception.
+*** PASS: test_cases/q5/corner_tiny_corner.test
+*** 	pacman layout:		tinyCorner
+*** 	solution length:		28
 
-### Question q5: 0/3 ###
+### Question q5: 3/3 ###
 
 
 Question q6
 ===========
 
-*** Method not implemented: getStartState at line 311 of searchAgents.py
-*** FAIL: Terminated with a string exception.
+*** PASS: heuristic value less than true cost at start state
+*** PASS: heuristic value less than true cost at start state
+*** PASS: heuristic value less than true cost at start state
+path: ['North', 'East', 'East', 'East', 'East', 'North', 'North', 'West', 'West', 'West', 'West', 'North', 'North', 'North', 'North', 'North', 'North', 'North', 'North', 'West', 'West', 'West', 'West', 'South', 'South', 'East', 'East', 'East', 'East', 'South', 'South', 'South', 'South', 'South', 'South', 'West', 'West', 'South', 'South', 'South', 'West', 'West', 'East', 'East', 'North', 'North', 'North', 'East', 'East', 'East', 'East', 'East', 'East', 'East', 'East', 'South', 'South', 'East', 'East', 'East', 'East', 'East', 'North', 'North', 'East', 'East', 'North', 'North', 'East', 'East', 'North', 'North', 'East', 'East', 'East', 'East', 'South', 'South', 'South', 'South', 'East', 'East', 'North', 'North', 'East', 'East', 'South', 'South', 'South', 'South', 'South', 'North', 'North', 'North', 'North', 'North', 'North', 'North', 'West', 'West', 'North', 'North', 'East', 'East', 'North', 'North']
+path length: 106
+*** PASS: Heuristic resulted in expansion of 901 nodes
 
-### Question q6: 0/3 ###
+### Question q6: 3/3 ###
 
 
 Question q7
 ===========
 
 *** PASS: test_cases/q7/food_heuristic_1.test
-*** FAIL: test_cases/q7/food_heuristic_10.test
-*** Heuristic failed non-triviality test
-*** Tests failed.
+*** PASS: test_cases/q7/food_heuristic_10.test
+*** PASS: test_cases/q7/food_heuristic_11.test
+*** PASS: test_cases/q7/food_heuristic_12.test
+*** PASS: test_cases/q7/food_heuristic_13.test
+*** PASS: test_cases/q7/food_heuristic_14.test
+*** PASS: test_cases/q7/food_heuristic_15.test
+*** PASS: test_cases/q7/food_heuristic_16.test
+*** PASS: test_cases/q7/food_heuristic_17.test
+*** PASS: test_cases/q7/food_heuristic_2.test
+*** PASS: test_cases/q7/food_heuristic_3.test
+*** PASS: test_cases/q7/food_heuristic_4.test
+*** PASS: test_cases/q7/food_heuristic_5.test
+*** PASS: test_cases/q7/food_heuristic_6.test
+*** PASS: test_cases/q7/food_heuristic_7.test
+*** PASS: test_cases/q7/food_heuristic_8.test
+*** PASS: test_cases/q7/food_heuristic_9.test
+*** PASS: test_cases/q7/food_heuristic_grade_tricky.test
+*** 	expanded nodes: 4137
+*** 	thresholds: [15000, 12000, 9000, 7000]
 
-### Question q7: 0/4 ###
+### Question q7: 5/4 ###
 
 
 Question q8
@@ -644,13 +1025,86 @@ Question q8
 [SearchAgent] using function depthFirstSearch
 [SearchAgent] using problem type PositionSearchProblem
 Warning: this does not look like a regular search maze
-*** Method not implemented: findPathToClosestDot at line 511 of searchAgents.py
-*** FAIL: Terminated with a string exception.
+*** PASS: test_cases/q8/closest_dot_1.test
+*** 	pacman layout:		Test 1
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_10.test
+*** 	pacman layout:		Test 10
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_11.test
+*** 	pacman layout:		Test 11
+*** 	solution length:		2
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_12.test
+*** 	pacman layout:		Test 12
+*** 	solution length:		3
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_13.test
+*** 	pacman layout:		Test 13
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_2.test
+*** 	pacman layout:		Test 2
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_3.test
+*** 	pacman layout:		Test 3
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_4.test
+*** 	pacman layout:		Test 4
+*** 	solution length:		3
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_5.test
+*** 	pacman layout:		Test 5
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_6.test
+*** 	pacman layout:		Test 6
+*** 	solution length:		2
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_7.test
+*** 	pacman layout:		Test 7
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_8.test
+*** 	pacman layout:		Test 8
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+*** PASS: test_cases/q8/closest_dot_9.test
+*** 	pacman layout:		Test 9
+*** 	solution length:		1
 
-### Question q8: 0/3 ###
+### Question q8: 3/3 ###
 
 
-Finished at 17:38:32
+Finished at 13:03:06
 
 Provisional grades
 ==================
@@ -658,12 +1112,12 @@ Question q1: 3/3
 Question q2: 3/3
 Question q3: 3/3
 Question q4: 3/3
-Question q5: 0/3
-Question q6: 0/3
-Question q7: 0/4
-Question q8: 0/3
+Question q5: 3/3
+Question q6: 3/3
+Question q7: 5/4
+Question q8: 3/3
 ------------------
-Total: 12/25
+Total: 26/25
 
 Your grades are NOT yet registered.  To register your grades, make sure
 to follow your instructor's guidelines to receive credit on your project.

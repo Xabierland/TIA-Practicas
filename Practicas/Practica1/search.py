@@ -121,7 +121,6 @@ def breadthFirstSearch(problem):
     while not queue.isEmpty():    # Mientras haya elementos en la cola
         nodo_actual = queue.pop()   # Sacar el primer elemento de la cola
         if problem.isGoalState(nodo_actual[0]):  # Si el nodo actual es el objetivo
-            print(nodo_actual[1])
             return nodo_actual[1]  # Devolver el camino
         if nodo_actual[0] not in visited:
             visited.add(nodo_actual[0])

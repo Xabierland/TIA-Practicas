@@ -492,70 +492,72 @@ class ClosestDotSearchAgent(SearchAgent):
     """Search for all food using a sequence of searches"""
 
     def registerInitialState(self, state):
-        self.actions = []
+        """
+        El agente registra el estado inicial y sigue buscando el punto de comida más cercano
+        hasta que todos los puntos de comida hayan sido consumidos.
+        """
+        self.actions = []  # Almacena las acciones que tomará Pacman
         currentState = state
+
+        # Repite mientras haya puntos de comida restantes
         while currentState.getFood().count() > 0:
-            nextPathSegment = self.findPathToClosestDot(currentState)  # The missing piece
+            # Encuentra el camino hacia el punto de comida más cercano
+            nextPathSegment = self.findPathToClosestDot(currentState)
+            
+            # Añade estas acciones al plan del agente
             self.actions += nextPathSegment
+
+            # Asegura que todas las acciones sean válidas
             for action in nextPathSegment:
                 legal = currentState.getLegalActions()
                 if action not in legal:
                     raise Exception(f'findPathToClosestDot returned an illegal move: {action}!\n{currentState}')
+                
+                # Genera el siguiente estado sucesor para Pacman
                 currentState = currentState.generateSuccessor(0, action)
+
         self.actionIndex = 0
         print(f'Path found with cost {len(self.actions)}.')
 
     def findPathToClosestDot(self, gameState):
         """
-        Returns a path (a list of actions) to the closest dot, starting from
-        gameState.
+        Devuelve una lista de acciones que llevan al punto de comida más cercano, comenzando desde el estado actual del juego.
         """
-        # Here are some useful elements of the startState
-        startPosition = gameState.getPacmanPosition()
-        food = gameState.getFood()
-        walls = gameState.getWalls()
+        # Define un problema de búsqueda para cualquier alimento disponible
         problem = AnyFoodSearchProblem(gameState)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Utiliza el algoritmo de búsqueda (BFS en este caso) para encontrar el camino más corto hacia el punto de comida más cercano
+        return search.breadthFirstSearch(problem)
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
-    A search problem for finding a path to any food.
-
-    This search problem is just like the PositionSearchProblem, but has a
-    different goal test, which you need to fill in below.  The state space and
-    successor function do not need to be changed.
-
-    The class definition above, AnyFoodSearchProblem(PositionSearchProblem),
-    inherits the methods of the PositionSearchProblem.
-
-    You can use this search problem to help you fill in the findPathToClosestDot
-    method.
+    Un problema de búsqueda para encontrar un camino a cualquier punto de comida.
+    Este problema es similar a PositionSearchProblem, pero con un objetivo distinto: cualquier punto de comida.
     """
 
     def __init__(self, gameState):
-        """Stores information from the gameState.  You don't need to change this."""
-        # Store the food for later reference
-        super().__init__(gameState)
+        """Almacena la información del estado de juego para su uso posterior."""
+        # Almacena los alimentos del estado de juego actual
         self.food = gameState.getFood()
 
-        # Store info for the PositionSearchProblem (no need to change this)
+        # Llama al constructor de PositionSearchProblem
+        super().__init__(gameState)
         self.walls = gameState.getWalls()
         self.startState = gameState.getPacmanPosition()
-        self.costFn = lambda x: 1
-        self._visited, self._visitedlist, self._expanded = {}, [], 0  # DO NOT CHANGE
+        self.costFn = lambda x: 1  # El costo de cada acción es 1
+
+        # Variables de seguimiento (no es necesario modificar)
+        self._visited, self._visitedlist, self._expanded = {}, [], 0
 
     def isGoalState(self, state):
         """
-        The state is Pacman's position. Fill this in with a goal test that will
-        complete the problem definition.
+        Devuelve si el estado actual (la posición de Pacman) es un estado objetivo.
+        El estado es un objetivo si contiene un punto de comida.
         """
         x, y = state
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # El estado es objetivo si hay comida en la posición actual de Pacman
+        return self.food[x][y]
 
 
 def mazeDistance(point1, point2, gameState):
