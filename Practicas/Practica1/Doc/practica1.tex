@@ -42,7 +42,7 @@
 
 % Personalización del índice de listados
 \renewcommand{\lstlistingname}{Código}  % Cambiar el nombre de "Listing" a "Código"
-\renewcommand{\lstlistlistingname}{Índice de Listados}
+\renewcommand{\lstlistlistingname}{Índice de Códigos}
 
 % Añade numeración a los subsubsections y los añade al índice
 \setcounter{secnumdepth}{4}
@@ -266,6 +266,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
           }
       \clearpage\section{Corners Problem: Representación}
         \subsection*{Descripción}
+          \paragraph*{}{
+            En este problema, Pacman debe visitar las cuatro esquinas de un laberinto antes de que se considere que ha alcanzado el objetivo. El problema se define mediante un estado inicial, un estado objetivo y una serie de acciones que Pacman puede realizar para moverse por el laberinto.\\
+            Para representar este problema, se ha definido una clase CornersProblem que hereda de la clase SearchProblem. Esta clase almacena la información del laberinto, la posición inicial de Pacman y las esquinas que deben ser visitadas. Además, se definen los métodos necesarios para obtener el estado inicial, comprobar si un estado es objetivo y obtener los sucesores de un estado dado.\\
+          }
         \subsection*{Primera implementación}
           \begin{lstlisting}[language=Python, caption=Implementación inicial del problema de las esquinas]
 class CornersProblem(search.SearchProblem):
@@ -424,10 +428,48 @@ class CornersProblem(search.SearchProblem):
       return len(actions)        
           \end{lstlisting}
         \subsection*{Comentarios}
+          \paragraph*{}{
+            El problema que hemos tenido en este ejercicio ha sido la definición del estado inicial. La primera aproximacion que se nos ocurrio fue la de eliminar los corners ya visitados de la definición del problema pero esto parecia generar conflicto por lo que decidimos añadir una tupla con los corners visitados al estado inicial.
+            De esta forma ya tenemos una representación del estado inicial que incluye la posición de pacman y las esquinas visitadas y podemos implementar el metodo isGoalState de forma efectiva.
+          }
       \clearpage\section{Corners Problem: Heurística}
         \subsection*{Descripción}
+          \paragraph*{}{
+            En este problema, se nos pide implementar una heurística para el problema de las esquinas, que permita calcular una estimación del coste mínimo para visitar todas las esquinas restantes. La heurística debe ser admisible y consistente, es decir, no puede sobreestimar el coste real de llegar a la meta y debe ser siempre menor o igual al coste real.\\
+            Para este problema, hemos implementado una heurística basada en la distancia de Manhattan, que calcula la distancia mínima entre la posición actual de Pacman y la esquina más cercana que aún no ha sido visitada. Esta heurística es admisible y consistente, ya que siempre subestima el coste real de recorrer todas las esquinas y es siempre menor o igual al coste real.\\
+          }
         \subsection*{Primera implementación}
           \begin{lstlisting}[language=Python, caption=Implementación inicial de la heurística del problema de las esquinas]
+def cornersHeuristic(state, problem):
+  """
+  A heuristic for the CornersProblem that you defined.
+
+    state:   The current search state
+              (a data structure you chose in your search problem)
+
+    problem: The CornersProblem instance for this layout.
+
+  This function should always return a number that is a lower bound on the
+  shortest path from the state to a goal of the problem; i.e.  it should be
+  admissible (as well as consistent).
+  """
+  currentPosition, visitedCorners = state
+  corners = problem.corners
+
+  # Identificar las esquinas que aún no han sido visitadas
+  unvisitedCorners = [corner for corner in corners if corner not in visitedCorners]
+
+  # Calcular la distancia mínima utilizando la distancia Manhattan
+  current = currentPosition
+  while unvisitedCorners:
+    distances = [(util.manhattanDistance(current, corner), corner) for corner in unvisitedCorners]
+    minDistance, closestCorner = min(distances)
+
+    heuristic = minDistance
+    current = closestCorner
+    unvisitedCorners.remove(closestCorner)
+
+  return heuristic
           \end{lstlisting}
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final de la heurística del problema de las esquinas]
@@ -444,10 +486,6 @@ def cornersHeuristic(state, problem):
   # Identificar las esquinas que aún no han sido visitadas
   unvisitedCorners = [corner for corner in corners if corner not in visitedCorners]
 
-  # Si no hay esquinas por visitar, la heurística es 0
-  if not unvisitedCorners:
-      return 0
-
   # Calcular la distancia mínima utilizando la distancia Manhattan
   heuristic = 0
   current = currentPosition
@@ -462,13 +500,42 @@ def cornersHeuristic(state, problem):
       current = closestCorner
       unvisitedCorners.remove(closestCorner)
 
-  return heuristic
+  return heuristic        
           \end{lstlisting}
         \subsection*{Comentarios}
+          \paragraph*{}{
+            El principal error en la primera implementacion estaba en que no se estaba calculando la heuristica de forma correcta ya que se estaba usando como heuristica siempre la distancia minima entre la posicion actual y la esquina mas cercana cuando deberia estar dando el coste minimo de llegar a todas las esquinas restantes.
+            Esto provocaba subestimar el costo real de recorrer todas las esquinas, ya que no se tienen en cuenta las distancias adicionales necesarias para visitar las otras esquinas.
+          }
       \clearpage\section{Eating All The Dots: Heurística}
         \subsection*{Descripción}
+          \paragraph*{}{
+            En este problema, Pacman debe recoger todas las comidas del laberinto antes de que se considere que ha alcanzado el objetivo. El problema se define mediante un estado inicial, un estado objetivo y una serie de acciones que Pacman puede realizar para moverse por el laberinto.\\
+            Para representar este problema, se ha definido una clase FoodSearchProblem que hereda de la clase SearchProblem. Esta clase almacena la información del laberinto, la posición inicial de Pacman y las comidas que deben ser recogidas. Además, se definen los métodos necesarios para obtener el estado inicial, comprobar si un estado es objetivo y obtener los sucesores de un estado dado.\\
+          }
         \subsection*{Primera implementación}
           \begin{lstlisting}[language=Python, caption=Implementación inicial de la heurística del problema de las esquinas]
+def foodHeuristic(state, problem):
+  """
+  A heuristic for the FoodSearchProblem.
+  
+  state: (pacmanPosition, foodGrid)
+  problem: The FoodSearchProblem instance.
+  """
+  position, foodGrid = state
+
+  # Convert foodGrid to a list of food positions
+  foodList = foodGrid.asList()
+
+  # Si no hay comida restante, la heurística es 0
+  if not foodList:
+      return 0
+
+  # Calcular la distancia de laberinto a cada punto de comida desde la posición actual de Pacman
+  distances = [mazeDistance(position, food, problem.startingGameState) for food in foodList]
+
+  # La heurística es la distancia máxima a cualquier punto de comida
+  return min(distances)
           \end{lstlisting}
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final de la heurística del problema de las esquinas]
@@ -495,11 +562,15 @@ def foodHeuristic(state, problem):
   return max(distances)
           \end{lstlisting}
         \subsection*{Comentarios}
+          \paragraph*{}{
+            El problema en la primera implementación era que se estaba calculando la heurística como la distancia mínima a cualquier punto de comida, lo que subestima el costo real de recorrer todos los puntos de comida y provoca que se elijan caminos suboptimos al no tener en cuenta las comidas más lejanas.\\
+          }
       \clearpage\section{Suboptimal Search}
         \subsection*{Descripción}
-        \subsection*{Primera implementación}
-          \begin{lstlisting}[language=Python, caption=Implementación inicial del problema de las esquinas]
-          \end{lstlisting}
+          \paragraph*{}{
+            En este problema, se nos pide implementar un agente de búsqueda que encuentre un camino subóptimo para recoger todas las comidas del laberinto. El agente debe utilizar una secuencia de búsquedas para encontrar el camino más corto hacia el punto de comida más cercano y repetir este proceso hasta que todas las comidas hayan sido recogidas.\\
+            Para implementar este agente, hemos definido una clase ClosestDotSearchAgent que hereda de la clase SearchAgent. Esta clase almacena las acciones que tomará Pacman para recoger todas las comidas y utiliza una secuencia de búsquedas para encontrar el camino más corto hacia el punto de comida más cercano.\\
+          }
         \subsection*{Implementación Final}
           \begin{lstlisting}[language=Python, caption=Implementación final del problema de las esquinas]
 class ClosestDotSearchAgent(SearchAgent):
@@ -575,6 +646,10 @@ class AnyFoodSearchProblem(PositionSearchProblem):
       return self.food[x][y]
           \end{lstlisting}
         \subsection*{Comentarios}
+          \paragraph*{}{
+            En este caso, la implementacion del agente ClosestDotSearchAgent es muy sencilla, ya que simplemente se encarga de buscar el camino más corto hacia el punto de comida más cercano y añadirlo a la lista de acciones que tomará Pacman.
+            Para ello reciclamos la implementacion del algoritmo BFS que ya teniamos implementado ya que es el algoritmo más adecuado para encontrar el camino más corto en este caso.\\
+          }
     \chapter{Resultados}
       \section{Casos de pruebas}
         \subsection{DFS}
@@ -851,8 +926,17 @@ Record:        Win
         \clearpage\subsection{Suboptimal Search}
           \begin{lstlisting}[language=Python, caption=Prueba Suboptimal Search]
 python pacman.py -l bigSearch -p ClosestDotSearchAgent -z .5
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+Warning: this does not look like a regular search maze
+Path found with cost 350.
+Pacman emerges victorious! Score: 2360
+Average Score: 2360.0
+Scores:        2360.0
+Win Rate:      1/1 (1.00)
+Record:        Win
           \end{lstlisting}
-      \section{Autograder}
+      \clearpage\section{Autograder}
           \begin{lstlisting}
 Starting on 10-6 at 13:02:51
 

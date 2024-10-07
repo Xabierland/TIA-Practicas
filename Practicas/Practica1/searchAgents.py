@@ -374,13 +374,12 @@ def cornersHeuristic(state, problem):
     # Identificar las esquinas que aún no han sido visitadas
     unvisitedCorners = [corner for corner in corners if corner not in visitedCorners]
 
-    # Si no hay esquinas por visitar, la heurística es 0
-    if not unvisitedCorners:
-        return 0
-
     # Calcular la distancia mínima utilizando la distancia Manhattan
     heuristic = 0
     current = currentPosition
+
+    # Si no hay esquinas por visitar, la heurística es 0
+
 
     while unvisitedCorners:
         # Encontrar la esquina más cercana (distancia Manhattan)
