@@ -5,8 +5,8 @@ Practicas de la asignatura de técnicas de inteligencia artificial.
 ## Practicas
 
 - Laboratorio 0 - Introducción a Python
-- Laboratorio 1 - Busqueda en Profundidad (DFS)
-- Laboratorio 2 -
+- Laboratorio 1 - Problemas de Búsqueda
+- Laboratorio 2 - Búsqueda Multi-Agente
 - Laboratorio 3 -
 - Laboratorio 4 -
 

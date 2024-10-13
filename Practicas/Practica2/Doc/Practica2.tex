@@ -1,0 +1,309 @@
+\documentclass{report}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx, longtable, float, titlesec, hyperref, enumitem, dingbat, soul, multicol, listings}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[margin=2cm]{geometry}
+
+% Cambia el color de los links
+\hypersetup{
+    hidelinks = true
+}
+
+% Python Code
+\lstdefinestyle{Python}{
+  commentstyle=\color{brown},
+  keywordstyle=\color{violet},
+  numberstyle=\tiny\color{gray},
+  stringstyle=\color{purple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  literate={ñ}{{\~n}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+}
+\lstset{style=Python}
+
+% Elimina la palabra "Capítulo" de los títulos de los capítulos
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge\thechapter.\space}
+
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
+
+% Personalización del índice de listados
+\renewcommand{\lstlistingname}{Código}  % Cambiar el nombre de "Listing" a "Código"
+\renewcommand{\lstlistlistingname}{Índice de Códigos}
+
+% Añade numeración a los subsubsections y los añade al índice
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\begin{document}
+    \begin{titlepage}
+        \centering
+        \includegraphics[width=0.6\textwidth]{./.img/logo.jpg}\\
+        \vspace{1cm}
+        \LARGE Técnicas de Inteligencia Artificial\\
+        \vspace{0.5cm}
+        \Large Ingeniería Informática de Gestión y Sistemas de Información\\
+        \vspace{3cm}
+        \Huge Practica 2\\
+        \huge Búsqueda Multi-Agente\\
+        \vspace{2.5cm}
+        \Large Autor(es):\\
+        \vspace{0.2cm}
+        \large Xabier Gabiña\\
+        \large Diego Montoya\\
+        \vfill
+        \today
+    \end{titlepage}
+    \tableofcontents
+    \listoffigures
+    \lstlistoflistings
+    \chapter{Introducción}
+    \chapter{Ejercicios}
+      \section{Agente Reflex}
+        \subsection{Descripción}
+        \subsection{Primera implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación del agente reflex]
+          \end{lstlisting}
+        \subsection{Implementación final}
+          \begin{lstlisting}[language=Python, caption=Implementación final del agente reflex]
+class ReflexAgent(Agent):
+  """
+  Un agente reflexivo que elige acciones basándose en una función de evaluación.
+  """
+
+  def getAction(self, gameState):
+      """
+      Devuelve la mejor acción para Pacman basada en la función de evaluación.
+      """
+      # Obtiene las acciones legales para Pacman
+      legalMoves = gameState.getLegalActions()
+
+      # Calcula los puntajes para cada acción utilizando la función de evaluación
+      scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
+      bestScore = max(scores)  # Encuentra el puntaje más alto
+      bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+      chosenIndex = random.choice(bestIndices)  # Elige aleatoriamente entre las mejores acciones
+
+      return legalMoves[chosenIndex]
+
+  def evaluationFunction(self, currentGameState, action):
+      """
+      Calcula el valor del estado sucesor después de que Pacman toma la acción `action`.
+      Devuelve un valor numérico mayor para estados más favorables.
+      """
+      # Generar el estado sucesor
+      successorGameState = currentGameState.generatePacmanSuccessor(action)
+      # Obtiene la posición de Pacman después de moverse
+      newPos = successorGameState.getPacmanPosition()
+      # Obtiene la matriz de comida en el estado sucesor
+      newFood = successorGameState.getFood()
+      # Obtiene la lista de estados de los fantasmas
+      newGhostStates = successorGameState.getGhostStates()
+      # Obtiene los tiempos restantes de los fantasmas asustados
+      newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+      # Inicializar el puntaje con el puntaje base del sucesor
+      score = successorGameState.getScore()
+
+      # 1. Distancia a la comida más cercana
+      foodList = newFood.asList()  # Convertir la matriz de comida a una lista de posiciones
+      if foodList:  # Si hay comida disponible
+          # Calcular la distancia mínima a la comida más cercana
+          minFoodDistance = min([manhattanDistance(newPos, food) for food in foodList])
+          # Invertir la distancia para que un menor valor de distancia dé un mayor puntaje
+          score += 10.0 / minFoodDistance
+
+      # 2. Distancia a los fantasmas no asustados
+      for ghost in newGhostStates:
+          ghostPos = ghost.getPosition()
+          ghostDistance = manhattanDistance(newPos, ghostPos)
+          if ghostDistance < 2 and ghost.scaredTimer == 0:  # Fantasma no asustado y muy cerca
+              score -= 1000  # Penalización fuerte por estar demasiado cerca de un fantasma peligroso
+
+      # 3. Incentivo por acercarse a fantasmas asustados
+      for i, ghost in enumerate(newGhostStates):
+          if newScaredTimes[i] > 0:  # Si el fantasma está asustado
+              ghostDistance = manhattanDistance(newPos, ghost.getPosition())
+              score += 200.0 / (ghostDistance + 1)  # Premiar estar cerca de un fantasma asustado
+
+      # 4. Penalización por comida restante
+      score -= len(foodList) * 10  # Penalizar por cada comida restante en el estado sucesor
+
+      return score
+          \end{lstlisting}
+        \subsection{Comentarios}
+          \paragraph*{}{
+
+          }
+        \subsection{Comentarios}
+      \clearpage\section{Minimax}
+        \subsection{Descripción}
+        \subsection{Primera implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación final del BFS]
+class MinimaxAgent(MultiAgentSearchAgent):
+  """
+  Agente que implementa el algoritmo Minimax.
+  """
+
+  def getAction(self, gameState):
+      """
+      Devuelve la mejor acción para Pacman desde el estado actual `gameState` usando Minimax.
+      """
+      # Llama a la función minimax empezando con el agente 0 (Pacman) y profundidad 0
+      best_action, _ = self.minimax(gameState, agentIndex=0, depth=0)
+      return best_action
+
+  def minimax(self, gameState, agentIndex, depth):
+      """
+      Función minimax que devuelve la mejor acción y su valor para el agente actual.
+      """
+      # Si el estado es terminal (gana o pierde) o alcanzamos la profundidad máxima, evaluamos el estado
+      if gameState.isWin() or gameState.isLose() or depth == self.depth:
+          return None, self.evaluationFunction(gameState)
+
+      if agentIndex == 0: # Pacman - Maximizador
+          return self.max_value(gameState, agentIndex, depth)
+      else:               # Fantasmas - Minimizadores
+          return self.min_value(gameState, agentIndex, depth)
+
+  def max_value(self, gameState, agentIndex, depth):
+      """
+      Calcula el valor máximo para el agente Pacman (maximizador).
+      """
+      # Inicializar el mejor valor y la mejor acción
+      best_value = float('-inf')
+      best_action = None
+
+      # Recorre todas las acciones legales para Pacman
+      for action in gameState.getLegalActions(agentIndex):
+          # Generar el estado sucesor
+          successorState = gameState.generateSuccessor(agentIndex, action)
+          # Calcular el valor del sucesor usando minimax con el siguiente agente
+          _, successor_value = self.minimax(successorState, 1, depth)
+          # Actualiza el valor máximo si se encuentra un mejor valor
+          if successor_value > best_value:
+              best_value = successor_value
+              best_action = action
+
+      return best_action, best_value
+
+  def min_value(self, gameState, agentIndex, depth):
+      """
+      Calcula el valor mínimo para los fantasmas (minimizador).
+      """
+      # Inicializar el peor valor y la mejor acción
+      worst_value = float('inf')
+      best_action = None
+
+      # Recorre todas las acciones legales para el fantasma actual
+      for action in gameState.getLegalActions(agentIndex):
+          # Generar el estado sucesor
+          successorState = gameState.generateSuccessor(agentIndex, action)
+          # Calcula el valor del sucesor con Pacman y siguiente nivel de profundidad
+          _, successor_value = self.minimax(successorState, 0, depth + 1)
+
+          # Actualiza el valor mínimo si se encuentra un peor valor
+          if successor_value < worst_value:
+              worst_value = successor_value
+              best_action = action
+
+      return best_action, worst_value
+
+          \end{lstlisting}
+        \subsection{Implementación final}
+          \begin{lstlisting}[language=Python, caption=Implementación final del BFS]
+class MinimaxAgent(MultiAgentSearchAgent):
+  """
+  Agente que implementa el algoritmo Minimax.
+  """
+
+  def getAction(self, gameState):
+      """
+      Devuelve la mejor acción para Pacman desde el estado actual `gameState` usando Minimax.
+      """
+      # Llama a la función minimax empezando con el agente 0 (Pacman) y profundidad 0
+      best_action, _ = self.minimax(gameState, agentIndex=0, depth=0)
+      return best_action
+
+  def minimax(self, gameState, agentIndex, depth):
+      """
+      Función minimax que devuelve la mejor acción y su valor para el agente actual.
+      """
+      # Si el estado es terminal (gana o pierde) o alcanzamos la profundidad máxima, evaluamos el estado
+      if gameState.isWin() or gameState.isLose() or depth == self.depth:
+          return None, self.evaluationFunction(gameState)
+
+      if agentIndex == 0: # Pacman - Maximizador
+          return self.max_value(gameState, agentIndex, depth)
+      else:               # Fantasmas - Minimizadores
+          return self.min_value(gameState, agentIndex, depth)
+
+  def max_value(self, gameState, agentIndex, depth):
+      """
+      Calcula el valor máximo para el agente Pacman (maximizador).
+      """
+      # Inicializar el mejor valor y la mejor acción
+      best_value = float('-inf')
+      best_action = None
+
+      # Recorre todas las acciones legales para Pacman
+      for action in gameState.getLegalActions(agentIndex):
+          # Generar el estado sucesor
+          successorState = gameState.generateSuccessor(agentIndex, action)
+          # Calcular el valor del sucesor usando minimax con el siguiente agente
+          _, successor_value = self.minimax(successorState, agentIndex + 1, depth)
+          # Actualiza el valor máximo si se encuentra un mejor valor
+          if successor_value > best_value:
+              best_value = successor_value
+              best_action = action
+
+      return best_action, best_value
+
+  def min_value(self, gameState, agentIndex, depth):
+      """
+      Calcula el valor mínimo para los fantasmas (minimizador).
+      """
+      # Inicializar el peor valor y la mejor acción
+      worst_value = float('inf')
+      best_action = None
+
+      # Recorre todas las acciones legales para el fantasma actual
+      for action in gameState.getLegalActions(agentIndex):
+          # Generar el estado sucesor
+          successorState = gameState.generateSuccessor(agentIndex, action)
+          
+          # Si es el último fantasma, pasamos a Pacman incrementando la profundidad
+          if agentIndex == gameState.getNumAgents() - 1:
+              # Calcula el valor del sucesor con Pacman y siguiente nivel de profundidad
+              _, successor_value = self.minimax(successorState, 0, depth + 1)
+          else:
+              # Calcula el valor del sucesor con el siguiente fantasma
+              _, successor_value = self.minimax(successorState, agentIndex + 1, depth)
+
+          # Actualiza el valor mínimo si se encuentra un peor valor
+          if successor_value < worst_value:
+              worst_value = successor_value
+              best_action = action
+
+      return best_action, worst_value
+        
+          \end{lstlisting}
+        \subsection{Comentarios}
+          \paragraph*{}{
+            En la primera implementación no he tenido en cuenta el número de agentes, por lo que el algoritmo solo funcionaba con dos agentes. En la implementación final, he tenido en cuenta el número de agentes y he modificado la función \texttt{min\_value} para que si el agente actual es el último fantasma, pase a Pacman y aumente la profundidad.
+          }
+    \chapter{Resultados}
+\end{document}

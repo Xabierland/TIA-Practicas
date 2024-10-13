@@ -68,6 +68,7 @@
         \today
     \end{titlepage}
     \tableofcontents
+    \listoffigures
     \lstlistoflistings
     \chapter{Introducción}
       {
@@ -81,11 +82,14 @@
       \section{DFS - Depth First Search}
         \subsection*{Descripción}
           \paragraph*{}{
-            DFS o Depth First Search es un algoritmo de búsqueda no informado que se basa en la exploración de todos los nodos de un grafo siguiendo una rama hasta llegar a un nodo hoja, para después retroceder y explorar otra rama.\\
+            DFS o Depth First Search es un algoritmo de búsqueda no informado,no emplea información adicional que no sean los nodos y sus arcos, este algoritmoque se basa en la exploración de todos los nodos de un grafo siguiendo una rama hasta llegar a un nodo hoja, para después retroceder y explorar otra rama.\\
+            
             Este algoritmo se implementa mediante una pila, en la que se van almacenando los nodos a visitar.\\
+            La pila es una estructura de datos de tipo LIFO (Last in First Out). La cual nos sirve para poder explorar por profundidad el árbol, gracias a l apila podemos recordar los nodos que deben de visitarse.\\
+            
             Su coste en tiempo es de O(b\textsuperscript{m}), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
             Su coste en espacio es de O(bm), donde b es el factor de ramificación y m es la profundidad máxima del árbol.\\
-          }  
+          }
         \subsection*{Primera implementación}
           \begin{lstlisting}[language=Python, caption=Implementación inicial del DFS]
   def depthFirstSearch(problem):
@@ -431,6 +435,14 @@ class CornersProblem(search.SearchProblem):
           \paragraph*{}{
             El problema que hemos tenido en este ejercicio ha sido la definición del estado inicial. La primera aproximacion que se nos ocurrio fue la de eliminar los corners ya visitados de la definición del problema pero esto parecia generar conflicto por lo que decidimos añadir una tupla con los corners visitados al estado inicial.
             De esta forma ya tenemos una representación del estado inicial que incluye la posición de pacman y las esquinas visitadas y podemos implementar el metodo isGoalState de forma efectiva.
+            }
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{.img/2.5-6.1.png}
+            \caption{CornersProblem: Representación}
+          \end{figure}
+          \paragraph*{}{
+            Con esta implementacion el pacman es capaz de recorrer todas las esquinas del laberinto.
           }
       \clearpage\section{Corners Problem: Heurística}
         \subsection*{Descripción}
@@ -507,6 +519,14 @@ def cornersHeuristic(state, problem):
             El principal error en la primera implementacion estaba en que no se estaba calculando la heuristica de forma correcta ya que se estaba usando como heuristica siempre la distancia minima entre la posicion actual y la esquina mas cercana cuando deberia estar dando el coste minimo de llegar a todas las esquinas restantes.
             Esto provocaba subestimar el costo real de recorrer todas las esquinas, ya que no se tienen en cuenta las distancias adicionales necesarias para visitar las otras esquinas.
           }
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{.img/2.5-6.1.png}
+            \caption{CornersProblem: Heuristic}
+          \end{figure}
+          \paragraph*{}{
+            En este caso el resultado es igual al del ejercicio anterior pero al usar la euristica el numero de nodos que se han expandido es mucho menor.
+          }
       \clearpage\section{Eating All The Dots: Heurística}
         \subsection*{Descripción}
           \paragraph*{}{
@@ -564,6 +584,19 @@ def foodHeuristic(state, problem):
         \subsection*{Comentarios}
           \paragraph*{}{
             El problema en la primera implementación era que se estaba calculando la heurística como la distancia mínima a cualquier punto de comida, lo que subestima el costo real de recorrer todos los puntos de comida y provoca que se elijan caminos suboptimos al no tener en cuenta las comidas más lejanas.\\
+          }
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{.img/2.7.1.png}
+            \caption{FoodSearchProblem inicio}
+          \end{figure}
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{.img/2.7.2.png}
+            \caption{FoodSearchProblem final}
+          \end{figure}
+          \paragraph*{}{
+            Una vez solventado el problema, el pacman es capaz de encontrar el camino más corto para recoger todas las comidas del laberinto.\\
           }
       \clearpage\section{Suboptimal Search}
         \subsection*{Descripción}
@@ -649,6 +682,27 @@ class AnyFoodSearchProblem(PositionSearchProblem):
           \paragraph*{}{
             En este caso, la implementacion del agente ClosestDotSearchAgent es muy sencilla, ya que simplemente se encarga de buscar el camino más corto hacia el punto de comida más cercano y añadirlo a la lista de acciones que tomará Pacman.
             Para ello reciclamos la implementacion del algoritmo BFS que ya teniamos implementado ya que es el algoritmo más adecuado para encontrar el camino más corto en este caso.\\
+
+            De esta forma, el agente ClosestDotSearchAgent se encarga de encontrar el camino más corto hacia el punto de comida más cercano y repetir este proceso hasta que todas las comidas hayan sido recogidas.\\
+          }
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{.img/2.8.1.png}
+            \caption{ClosestDotSearchAgent inicio}
+          \end{figure}
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{.img/2.8.2.png}
+            \caption{ClosestDotSearchAgent intermedio}
+          \end{figure}
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{.img/2.8.3.png}
+            \caption{ClosestDotSearchAgent final}
+          \end{figure}
+          \paragraph*{}
+          {
+            Como podemos ver en la ejecucion del agente, al comer simplemente teniendo en cuenta el punto de comida más cercano, no siempre se consigue el camino más corto para recoger todas las comidas.\\
           }
     \chapter{Resultados}
       \section{Casos de pruebas}
