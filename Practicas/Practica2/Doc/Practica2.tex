@@ -75,7 +75,7 @@
       \section{Agente Reflex}
         \subsection{Descripción}
         \subsection{Primera implementación}
-          \begin{lstlisting}[language=Python, caption=Implementación del agente reflex]
+          \begin{lstlisting}[language=Python, caption=Implementación inicial del agente reflex]
           \end{lstlisting}
         \subsection{Implementación final}
           \begin{lstlisting}[language=Python, caption=Implementación final del agente reflex]
@@ -148,11 +148,10 @@ class ReflexAgent(Agent):
           \paragraph*{}{
 
           }
-        \subsection{Comentarios}
       \clearpage\section{Minimax}
         \subsection{Descripción}
         \subsection{Primera implementación}
-          \begin{lstlisting}[language=Python, caption=Implementación final del BFS]
+          \begin{lstlisting}[language=Python, caption=Implementación inicial del agente Minimax]
 class MinimaxAgent(MultiAgentSearchAgent):
   """
   Agente que implementa el algoritmo Minimax.
@@ -224,7 +223,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
           \end{lstlisting}
         \subsection{Implementación final}
-          \begin{lstlisting}[language=Python, caption=Implementación final del BFS]
+          \begin{lstlisting}[language=Python, caption=Implementación final del agente Minimax]
 class MinimaxAgent(MultiAgentSearchAgent):
   """
   Agente que implementa el algoritmo Minimax.
@@ -305,5 +304,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
           \paragraph*{}{
             En la primera implementación no he tenido en cuenta el número de agentes, por lo que el algoritmo solo funcionaba con dos agentes. En la implementación final, he tenido en cuenta el número de agentes y he modificado la función \texttt{min\_value} para que si el agente actual es el último fantasma, pase a Pacman y aumente la profundidad.
           }
+      \clearpage\section{Podado Alpha-Beta}
+      \clearpage\section{Expectimax}
+      \clearpage\section{Función de Evaluación}
     \chapter{Resultados}
+      \section{Casos de prueba}
+      \clearpage\section{Autograder}
 \end{document}
