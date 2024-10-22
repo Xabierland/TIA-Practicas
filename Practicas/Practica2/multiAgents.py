@@ -196,47 +196,214 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
-    Your minimax agent with alpha-beta pruning (question 3)
-    """
-
-    def getAction(self, game_state):
-        """
-        Returns the minimax action using self.depth and self.evaluationFunction
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
-
-class ExpectimaxAgent(MultiAgentSearchAgent):
-    """
-      Your expectimax agent (question 4)
+    Implementacion del minimax con poda alfa-beta.
     """
 
     def getAction(self, gameState):
         """
-        Returns the expectimax action using self.depth and self.evaluationFunction
-
-        All ghosts should be modeled as choosing uniformly at random from their
-        legal moves.
+        Devuelve la mejor acción para Pacman desde el estado actual `gameState` usando Minimax.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Llama a la función minimax empezando con el agente 0 (Pacman) y profundidad 0
+        best_action, _ = self.minimax(gameState, agentIndex=0, depth=0, alpha=float('-inf'), beta=float('inf'))
+        return best_action
 
+    def minimax(self, gameState, agentIndex, depth, alpha, beta):
+        """
+        Función minimax que devuelve la mejor acción y su valor para el agente actual.
+        """
+        # Si el estado es terminal (gana o pierde) o alcanzamos la profundidad máxima, evaluamos el estado
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return None, self.evaluationFunction(gameState)
+
+        if agentIndex == 0: # Pacman - Maximizador
+            return self.max_value(gameState, agentIndex, depth, alpha, beta)
+        else:               # Fantasmas - Minimizadores
+            return self.min_value(gameState, agentIndex, depth, alpha, beta)
+
+    def max_value(self, gameState, agentIndex, depth, alpha, beta):
+        """
+        Calcula el valor máximo para el agente Pacman (maximizador).
+        """
+        # Inicializar el mejor valor y la mejor acción
+        best_value = float('-inf')
+        best_action = None
+
+        # Recorre todas las acciones legales para Pacman
+        for action in gameState.getLegalActions(agentIndex):
+            # Generar el estado sucesor
+            successorState = gameState.generateSuccessor(agentIndex, action)
+            # Calcular el valor del sucesor usando minimax con el siguiente agente
+            _, successor_value = self.minimax(successorState, agentIndex + 1, depth, alpha, beta)
+            # Actualiza el valor máximo si se encuentra un mejor valor
+            if successor_value > best_value:
+                best_value = successor_value
+                best_action = action
+                
+            if best_value > beta:
+                return best_action, best_value
+            alpha = max(alpha, best_value)
+
+        return best_action, best_value
+
+    def min_value(self, gameState, agentIndex, depth, alpha, beta):
+        """
+        Calcula el valor mínimo para los fantasmas (minimizador).
+        """
+        # Inicializar el peor valor y la mejor acción
+        worst_value = float('inf')
+        best_action = None
+
+        # Recorre todas las acciones legales para el fantasma actual
+        for action in gameState.getLegalActions(agentIndex):
+            # Generar el estado sucesor
+            successorState = gameState.generateSuccessor(agentIndex, action)
+            
+            # Si es el último fantasma, pasamos a Pacman incrementando la profundidad
+            if agentIndex == gameState.getNumAgents() - 1:
+                # Calcula el valor del sucesor con Pacman y siguiente nivel de profundidad
+                _, successor_value = self.minimax(successorState, 0, depth + 1, alpha, beta)
+            else:
+                # Calcula el valor del sucesor con el siguiente fantasma
+                _, successor_value = self.minimax(successorState, agentIndex + 1, depth, alpha, beta)
+
+            # Actualiza el valor mínimo si se encuentra un peor valor
+            if successor_value < worst_value:
+                worst_value = successor_value
+                best_action = action
+                
+            if worst_value < alpha:
+                return best_action, worst_value
+            beta = min(beta, worst_value)
+
+        return best_action, worst_value
+
+
+class ExpectimaxAgent(MultiAgentSearchAgent):
+    """
+      Implementacion del algoritmo Expectimax.
+    """
+
+    def getAction(self, gameState):
+        best_action, _ = self.expectimax(gameState, agentIndex=0, depth=0)
+        return best_action
+    
+    def expectimax(self, gameState, agentIndex, depth):
+        """
+        Función expectimax que devuelve la mejor acción y su valor para el agente actual.
+        """
+        # Si el estado es terminal (gana o pierde) o alcanzamos la profundidad máxima, evaluamos el estado
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return None, self.evaluationFunction(gameState)
+
+        if agentIndex == 0: # Pacman - Maximizador
+            return self.max_value(gameState, agentIndex, depth)
+        else:               # Fantasmas - Minimizadores
+            return self.exp_value(gameState, agentIndex, depth)
+        
+    def max_value(self, gameState, agentIndex, depth):
+        """
+        Calcula el valor máximo para el agente Pacman (maximizador).
+        """
+        # Inicializar el mejor valor y la mejor acción
+        best_value = float('-inf')
+        best_action = None
+
+        # Recorre todas las acciones legales para Pacman
+        for action in gameState.getLegalActions(agentIndex):
+            # Generar el estado sucesor
+            successorState = gameState.generateSuccessor(agentIndex, action)
+            # Calcular el valor del sucesor usando expectimax con el siguiente agente
+            _, successor_value = self.expectimax(successorState, agentIndex + 1, depth)
+            # Actualiza el valor máximo si se encuentra un mejor valor
+            if successor_value > best_value:
+                best_value = successor_value
+                best_action = action
+
+        return best_action, best_value
+    
+    def exp_value(self, gameState, agentIndex, depth):
+        """
+        Calcula el valor esperado para los fantasmas (minimizador).
+        """
+        # Inicializar el valor esperado y la mejor acción
+        expected_value = 0
+        best_action = None
+
+        # Recorre todas las acciones legales para el fantasma actual
+        actions = gameState.getLegalActions(agentIndex)
+        for action in actions:
+            # Generar el estado sucesor
+            successorState = gameState.generateSuccessor(agentIndex, action)
+            
+            # Si es el último fantasma, pasamos a Pacman incrementando la profundidad
+            if agentIndex == gameState.getNumAgents() - 1:
+                # Calcula el valor del sucesor con Pacman y siguiente nivel de profundidad
+                _, successor_value = self.expectimax(successorState, 0, depth + 1)
+            else:
+                # Calcula el valor del sucesor con el siguiente fantasma
+                _, successor_value = self.expectimax(successorState, agentIndex + 1, depth)
+            # Actualiza el valor esperado con el valor del sucesor
+            expected_value += successor_value / len(actions)
+
+        return best_action, expected_value
+
+
+from util import manhattanDistance
 
 def betterEvaluationFunction(currentGameState):
     """
-    Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
-    evaluation function (question 5).
-
-    DESCRIPTION: <write something here so we know what you did>
+    Función de evaluación para Pacman que considera múltiples factores del estado de juego.
     """
-    pacman_pos = currentGameState.getPacmanPosition()
-    newFood = currentGameState.getFood()
-    newGhostStates = currentGameState.getGhostStates()
-    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Obtener el estado actual de Pacman
+    pacmanPos = currentGameState.getPacmanPosition()
+    
+    # Obtener la comida restante y convertirla a una lista de posiciones
+    food = currentGameState.getFood().asList()
+    
+    # Obtener las posiciones de los fantasmas y sus estados (asustados o no)
+    ghostStates = currentGameState.getGhostStates()
+    ghostPositions = [ghost.getPosition() for ghost in ghostStates]
+    scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
+    
+    # Obtener las pelets de poder restantes
+    capsules = currentGameState.getCapsules()
+    
+    # Obtener el puntaje actual del juego
+    score = currentGameState.getScore()
+    
+    # Inicializar la evaluación con el puntaje actual
+    evaluation = score
+
+    # 1. Distancia a la comida: Minimizar la distancia a la comida
+    if food:
+        minFoodDist = min([manhattanDistance(pacmanPos, foodPos) for foodPos in food])
+        # Dar un peso inversamente proporcional a la distancia a la comida
+        evaluation += 1.0 / (minFoodDist + 1)  # Sumar al score, +1 para evitar división por 0
+
+    # 2. Distancia a los fantasmas: Maximizar la distancia a los fantasmas (si no están asustados)
+    for i, ghostPos in enumerate(ghostPositions):
+        ghostDist = manhattanDistance(pacmanPos, ghostPos)
+        
+        if scaredTimes[i] > 0:  # Fantasma asustado
+            # Acercarse a los fantasmas asustados para ganar puntos al comérselos
+            evaluation += 10.0 / (ghostDist + 1)  # Dar un peso a la proximidad a fantasmas asustados
+        else:  # Fantasma no asustado
+            # Alejarse de los fantasmas si están demasiado cerca
+            if ghostDist > 0:
+                evaluation -= 10.0 / ghostDist  # Penalizar por estar cerca de un fantasma peligroso
+
+    # 3. Comida restante: Cuanta menos comida quede, mejor es el estado
+    evaluation -= 4.0 * len(food)  # Penalizar más comida restante
+
+    # 4. Cápsulas de poder: Incentivar estar cerca de las pelets de poder
+    if capsules:
+        minCapsuleDist = min([manhattanDistance(pacmanPos, capsule) for capsule in capsules])
+        evaluation += 5.0 / (minCapsuleDist + 1)  # Dar un peso inverso a la distancia a las pelets
+        evaluation -= 10 * len(capsules)  # Penalizar si quedan muchas pelets sin recoger
+
+    # Devolver la evaluación final ajustada por todos los factores
+    return evaluation
 
 
 # Abbreviation
