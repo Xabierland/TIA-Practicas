@@ -82,6 +82,10 @@ class ReflexAgent(Agent):
         # 4. Penalización por comida restante
         score -= len(foodList) * 10  # Penalizar por cada comida restante en el estado sucesor
 
+        # 5. Penalización por cápsulas de poder restantes
+        capsules = successorGameState.getCapsules()
+        score -= len(capsules) * 100
+
         return score
 
 
@@ -348,11 +352,9 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         return best_action, expected_value
 
 
-from util import manhattanDistance
-
 def betterEvaluationFunction(currentGameState):
     """
-    Función de evaluación para Pacman que considera múltiples factores del estado de juego.
+    Función de evaluación mejorada para Pacman que incentiva la comida cercana y evita la inactividad.
     """
 
     # Obtener el estado actual de Pacman
@@ -373,38 +375,36 @@ def betterEvaluationFunction(currentGameState):
     score = currentGameState.getScore()
     
     # Inicializar la evaluación con el puntaje actual
-    evaluation = score
+    score = score
 
-    # 1. Distancia a la comida: Minimizar la distancia a la comida
+    # 1. Incentivar comer comida cercana
     if food:
         minFoodDist = min([manhattanDistance(pacmanPos, foodPos) for foodPos in food])
-        # Dar un peso inversamente proporcional a la distancia a la comida
-        evaluation += 1.0 / (minFoodDist + 1)  # Sumar al score, +1 para evitar división por 0
+        # Aumentar el peso de la proximidad a la comida
+        score += 10.0 / (minFoodDist + 1)
 
     # 2. Distancia a los fantasmas: Maximizar la distancia a los fantasmas (si no están asustados)
     for i, ghostPos in enumerate(ghostPositions):
         ghostDist = manhattanDistance(pacmanPos, ghostPos)
         
         if scaredTimes[i] > 0:  # Fantasma asustado
-            # Acercarse a los fantasmas asustados para ganar puntos al comérselos
-            evaluation += 10.0 / (ghostDist + 1)  # Dar un peso a la proximidad a fantasmas asustados
+            # Incentivar acercarse a los fantasmas asustados para ganar puntos al comérselos
+            score += 20.0 / (ghostDist + 1)
         else:  # Fantasma no asustado
-            # Alejarse de los fantasmas si están demasiado cerca
             if ghostDist > 0:
-                evaluation -= 10.0 / ghostDist  # Penalizar por estar cerca de un fantasma peligroso
+                # Aumentar la penalización por estar cerca de fantasmas no asustados
+                score -= 15.0 / ghostDist
 
-    # 3. Comida restante: Cuanta menos comida quede, mejor es el estado
-    evaluation -= 4.0 * len(food)  # Penalizar más comida restante
+    # 3. Comida restante: Penalizar más fuerte la cantidad de comida restante
+    score -= 5.0 * len(food)
 
-    # 4. Cápsulas de poder: Incentivar estar cerca de las pelets de poder
+    # 4. Cápsulas de poder: Incentivar la proximidad a las cápsulas y penalizar su cantidad restante
     if capsules:
         minCapsuleDist = min([manhattanDistance(pacmanPos, capsule) for capsule in capsules])
-        evaluation += 5.0 / (minCapsuleDist + 1)  # Dar un peso inverso a la distancia a las pelets
-        evaluation -= 10 * len(capsules)  # Penalizar si quedan muchas pelets sin recoger
-
-    # Devolver la evaluación final ajustada por todos los factores
-    return evaluation
-
+        score += 8.0 / (minCapsuleDist + 1)
+        score -= 200 * len(capsules)  # Penalizar si quedan muchas cápsulas sin recoger
+        
+    return score
 
 # Abbreviation
 better = betterEvaluationFunction

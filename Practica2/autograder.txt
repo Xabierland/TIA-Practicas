@@ -1,4 +1,4 @@
-Starting on 10-15 at 18:32:26
+Starting on 10-26 at 17:50:23
 
 Question q1
 ===========
@@ -79,7 +79,7 @@ Average Score: 84.0
 Scores:        84.0
 Win Rate:      0/1 (0.00)
 Record:        Loss
-*** Finished running MinimaxAgent on smallClassic after 0.7832581996917725 seconds.
+*** Finished running MinimaxAgent on smallClassic after 0.7934041023254395 seconds.
 *** Won 0 out of 1 games. Average score: 84.0 ***
 *** PASS: test_cases/q2/8-pacman-game.test
 
@@ -128,7 +128,7 @@ Average Score: 84.0
 Scores:        84.0
 Win Rate:      0/1 (0.00)
 Record:        Loss
-*** Finished running AlphaBetaAgent on smallClassic after 0.7023296356201172 seconds.
+*** Finished running AlphaBetaAgent on smallClassic after 0.6842935085296631 seconds.
 *** Won 0 out of 1 games. Average score: 84.0 ***
 *** PASS: test_cases/q3/8-pacman-game.test
 
@@ -160,7 +160,7 @@ Average Score: 84.0
 Scores:        84.0
 Win Rate:      0/1 (0.00)
 Record:        Loss
-*** Finished running ExpectimaxAgent on smallClassic after 0.8156166076660156 seconds.
+*** Finished running ExpectimaxAgent on smallClassic after 1.030266284942627 seconds.
 *** Won 0 out of 1 games. Average score: 84.0 ***
 *** PASS: test_cases/q4/7-pacman-game.test
 
@@ -171,21 +171,21 @@ Question q5
 ===========
 
 Pacman emerges victorious! Score: 1366
-Pacman emerges victorious! Score: 1026
-Pacman emerges victorious! Score: 1060
-Pacman emerges victorious! Score: 1089
-Pacman emerges victorious! Score: 1015
-Pacman emerges victorious! Score: 1016
-Pacman emerges victorious! Score: 1238
-Pacman emerges victorious! Score: 760
-Pacman emerges victorious! Score: 1372
-Pacman emerges victorious! Score: 1321
-Average Score: 1126.3
-Scores:        1366.0, 1026.0, 1060.0, 1089.0, 1015.0, 1016.0, 1238.0, 760.0, 1372.0, 1321.0
+Pacman emerges victorious! Score: 1183
+Pacman emerges victorious! Score: 1338
+Pacman emerges victorious! Score: 1204
+Pacman emerges victorious! Score: 1367
+Pacman emerges victorious! Score: 1358
+Pacman emerges victorious! Score: 1377
+Pacman emerges victorious! Score: 1182
+Pacman emerges victorious! Score: 1373
+Pacman emerges victorious! Score: 1342
+Average Score: 1309.0
+Scores:        1366.0, 1183.0, 1338.0, 1204.0, 1367.0, 1358.0, 1377.0, 1182.0, 1373.0, 1342.0
 Win Rate:      10/10 (1.00)
 Record:        Win, Win, Win, Win, Win, Win, Win, Win, Win, Win
 *** PASS: test_cases/q5/grade-agent.test (6 of 6 points)
-***     1126.3 average score (2 of 2 points)
+***     1309.0 average score (2 of 2 points)
 ***         Grading scheme:
 ***          < 500:  0 points
 ***         >= 500:  1 points
@@ -205,7 +205,7 @@ Record:        Win, Win, Win, Win, Win, Win, Win, Win, Win, Win
 ### Question q5: 6/6 ###
 
 
-Finished at 18:32:43
+Finished at 17:50:33
 
 Provisional grades
 ==================
