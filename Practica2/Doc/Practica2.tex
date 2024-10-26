@@ -84,7 +84,7 @@
         Además, se mejorará la función de evaluación del agente reflex para que tome en cuenta más factores del estado del juego.
       }
     \chapter{Ejercicios}
-      \section{Agente Reflex}
+      \section{Agente Reflex} %TERMINADO
         \subsection*{Descripción}
           \paragraph*{}{
             Un agente reflex es un agente que selecciona acciones a corto plazo basándose en la percepción actual del entorno. 
@@ -416,7 +416,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
           \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
-            En la primera implementación no he tenido en cuenta el número de agentes, por lo que el algoritmo solo funcionaba con dos agentes. En la implementación final, he tenido en cuenta el número de agentes y he modificado la función \texttt{min\_value} para que si el agente actual es el último fantasma, pase a Pacman y aumente la profundidad.
+            Debido a no leer bien el enunciado del ejercicio, no hemos implementado de primeras la opción de que haya más de dos agentes minimizadores, por lo que el algoritmo solo funcionaba con un agente maximizador y otro minimizador.
+            En la implementación final, hemos tenido en cuenta el número de agentes y he modificado la función \texttt{min\_value} para que, si el agente actual es el último fantasma, pase a Pacman y aumente la profundidad.
           }
       \clearpage\section{Podado Alpha-Beta} %TERMINADO
         \subsection*{Descripción}
@@ -525,7 +526,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             En este caso, la implementación es practicamente igual a la del algoritmo Minimax, con la única diferencia de que se han añadido los parámetros alpha y beta a las funciones \texttt{max\_value} y \texttt{min\_value} para realizar la poda junto con las condiciones de corte.
             De esta forma, si el valor de un nodo es mayor que el valor de beta en el caso de un nodo maximizador o menor que alpha en el caso de un nodo minimizador, se poda la rama.
           }
-      \clearpage\section{Expectimax}
+      \clearpage\section{Expectimax} %TERMINADO
         \subsection*{Descripción}
           \paragraph*{}{
             El algoritmo Expectimax es una variante del algoritmo Minimax que se utiliza cuando los oponentes no toman siempre la mejor decisión posible.
@@ -683,7 +684,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
-            En esta implementación hubo un error anecdotico practicamente en el que al copiar el código de Minimax como base no copie la funcion getAction() correctamente y al implementarla de memoria la hice mal.
+            En esta implementación hubo un error anecdotico practicamente en el que al copiar el código de Minimax como base no copie la funcion \texttt{getAction()} correctamente y al implementarla de memoria la hice mal.
             Más haya de ello, la implementación se basa en cambiar la funcion \texttt{min\_value} por \texttt{exp\_value} y en vez de devolver el valor mínimo de los nodos sucesores, se devuelve la media de los valores.
             De esta forma se tiene en cuenta que los oponentes no siempre toman la mejor decisión posible.
           }
