@@ -165,7 +165,7 @@ class ReflexAgent(Agent):
           \paragraph*{}{
 
           }
-      \clearpage\section{Minimax}
+      \clearpage\section{Minimax} %TERMINADO
         \subsection*{Descripción}
           \paragraph*{}{
             Minimax es un algoritmo de búsqueda en árboles que se utiliza en juegos de dos o más jugadores y deterministas.
@@ -343,7 +343,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
           \paragraph*{}{
             En la primera implementación no he tenido en cuenta el número de agentes, por lo que el algoritmo solo funcionaba con dos agentes. En la implementación final, he tenido en cuenta el número de agentes y he modificado la función \texttt{min\_value} para que si el agente actual es el último fantasma, pase a Pacman y aumente la profundidad.
           }
-      \clearpage\section{Podado Alpha-Beta}
+      \clearpage\section{Podado Alpha-Beta} %TERMINADO
         \subsection*{Descripción}
           \paragraph*{}
           {
@@ -357,10 +357,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 \includegraphics[width=0.9\textwidth]{./.img/alpha-beta.jpg}
                 \caption{Ejemplo de poda Alpha-Beta}
             \end{figure}
+
+            Respecto al coste tanto en tiempo como en espacio, el algoritmo Alpha-Beta es una mejora del algoritmo Minimax, por lo que su coste en tiempo es $O(b^{m/2})$ y en espacio $O(bm)$.
           }
-        \subsection*{Primera implementación}
-          \begin{lstlisting}[language=Python, caption=Implementación inicial del agente Alpha-Beta]
-          \end{lstlisting}
         \subsection*{Implementación final}
             \begin{lstlisting}[language=Python, caption=Implementación final del agente Alpha-Beta]
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -448,13 +447,23 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
-
+            En este caso, la implementación es practicamente igual a la del algoritmo Minimax, con la única diferencia de que se han añadido los parámetros alpha y beta a las funciones \texttt{max\_value} y \texttt{min\_value} para realizar la poda junto con las condiciones de corte.
+            De esta forma, si el valor de un nodo es mayor que el valor de beta en el caso de un nodo maximizador o menor que alpha en el caso de un nodo minimizador, se poda la rama.
           }
       \clearpage\section{Expectimax}
         \subsection*{Descripción}
           \paragraph*{}{
             El algoritmo Expectimax es una variante del algoritmo Minimax que se utiliza cuando los oponentes no toman siempre la mejor decisión posible.
-            En lugar de minimizar el valor de los nodos de los oponentes, el algoritmo Expectimax toma la media de los valores de los nodos sucesores.
+            En lugar de minimizar el valor de los nodos de los oponentes, el algoritmo Expectimax multiplicará el valor de los nodos de los oponentes por la probabilidad de que tomen una determinada acción.
+            En este caso, se asume que las acciones son equiprobables, por lo que la probabilidad de que un oponente tome una acción es 1/n, donde n es el número de acciones legales.
+            
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.7\textwidth]{./.img/expectimax.png}
+                \caption{Ejemplo de árbol de búsqueda Expectimax}
+            \end{figure}
+
+            Respecto al coste tanto en tiempo como en espacio, el algoritmo Expectimax es un DFS igual que el Minimax, por lo que su coste en tiempo es $O(b^m)$ y en espacio $O(bm)$.
           }
         \subsection*{Primera implementación}
           \begin{lstlisting}[language=Python, caption=Implementación inicial del agente Expectimax]
@@ -599,7 +608,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             \end{lstlisting}
         \subsection*{Comentarios}
           \paragraph*{}{
-
+            En esta implementación hubo un error anecdotico practicamente en el que al copiar el código de Minimax como base no copie la funcion getAction() correctamente y al implementarla de memoria la hice mal.
+            Más haya de ello, la implementación se basa en cambiar la funcion \texttt{min\_value} por \texttt{exp\_value} y en vez de devolver el valor mínimo de los nodos sucesores, se devuelve la media de los valores.
           }
       \clearpage\section{Función de Evaluación}
         \subsection*{Descripción}
