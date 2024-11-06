@@ -1,0 +1,75 @@
+\documentclass{report}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx, longtable, float, titlesec, hyperref, enumitem, dingbat, soul, multicol, listings}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[margin=2cm]{geometry}
+
+% Cambia el color de los links
+\hypersetup{
+    hidelinks = true
+}
+
+% Python Code
+\lstdefinestyle{Python}{
+  commentstyle=\color{brown},
+  keywordstyle=\color{violet},
+  numberstyle=\tiny\color{gray},
+  stringstyle=\color{purple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  literate={ñ}{{\~n}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+}
+\lstset{style=Python}
+
+% Elimina la palabra "Capítulo" de los títulos de los capítulos
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge\thechapter.\space}
+
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
+
+% Personalización del índice de listados
+\renewcommand{\lstlistingname}{Código}  % Cambiar el nombre de "Listing" a "Código"
+\renewcommand{\lstlistlistingname}{Índice de Códigos}
+
+% Añade numeración a los subsubsection*s y los añade al índice
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\begin{document}
+    \begin{titlepage}
+        \centering
+        \includegraphics[width=0.6\textwidth]{./.img/logo.jpg}\\
+        \vspace{1cm}
+        \LARGE Técnicas de Inteligencia Artificial\\
+        \vspace{0.5cm}
+        \Large Ingeniería Informática de Gestión y Sistemas de Información\\
+        \vspace{3cm}
+        \Huge Practica 2\\
+        \huge Búsqueda Multi-Agente\\
+        \vspace{2.5cm}
+        \Large Autor(es):\\
+        \vspace{0.2cm}
+        \large Xabier Gabiña\\
+        \large Diego Montoya\\
+        \vfill
+        \today
+    \end{titlepage}
+    \tableofcontents
+    \listoffigures
+    \listoftables
+    \lstlistoflistings
+    \chapter{Introducción}
+\end{document}
