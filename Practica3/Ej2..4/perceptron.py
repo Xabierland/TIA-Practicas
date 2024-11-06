@@ -60,18 +60,22 @@ class PerceptronClassifier:
         for iteration in range(self.max_iterations):
             print("Starting iteration ", iteration, "...")
             for i in range(len(trainingData)):  # training data
-                pdb.set_trace()  # esto es un break point para que puedas comprobar el formato de los datos
-                ########################################################################################
-                # 1. i es el indice de un ejemplo (un item, f(x) de un ejemplo) del conjunto de entrenamiento.
-                # 2. Asi pues, en cada vuelta de este loop se trata un solo ejemplo
-                #    por cada ejemplo calculareis el producto punto (dotProduct) w*item
-                #    NOTAS: Recordad que cada ejemplo viene representado por varios rasgos (o features), es decir, es un vector de rasgos, tantos como nos marca el atributo self.features.
-                #          Asi cada ejemplo es de dimension 1 filas y self.features).
-                #          La dimension del vector w tambien es self.features, es decir, habra tantos pesos en w_rasgo dentro de w como rasgos haya en cada item de ejemplo
-                #          Recordad tambien que es una clasificacion multiclase en este caso. Hay tantas clases como nos marca el atributo self.legalLabels
-                #########################################################################################
-                "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+                # Obtener el ejemplo y su etiqueta real
+                x_i = trainingData[i]
+                y_i = trainingLabels[i]
+
+                # Calcular los puntajes para cada etiqueta
+                scores = util.Counter()
+                for label in self.legalLabels:
+                    scores[label] = self.weights[label] * x_i
+
+                # Predecir la etiqueta con el puntaje más alto
+                predicted_label = scores.argMax()
+
+                # Si la predicción es incorrecta, actualizar los pesos
+                if predicted_label != y_i:
+                    self.weights[y_i] += x_i
+                    self.weights[predicted_label] -= x_i
 
     def classify(self, data):
         """
@@ -92,9 +96,13 @@ class PerceptronClassifier:
         """
         Returns a list of the 100 features with the greatest weight for some label
         """
-        featuresWeights = []
+        # Obtener los pesos de los features para la etiqueta dada
+        weights = self.weights[label]
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Ordenar los features por peso en orden descendente
+        sorted_features = weights.sortedKeys()
+
+        # Seleccionar los 100 features con mayor peso
+        featuresWeights = sorted_features[:100]
 
         return featuresWeights

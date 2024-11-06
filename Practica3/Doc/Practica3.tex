@@ -72,14 +72,137 @@
     \listoftables
     \lstlistoflistings
     \chapter{Introducción}
+      \paragraph*{}{
+        Esta practica consiste en comprender e implmentar un clasificador mediante el algoritmo de perceptron.
+        Para ello empezaremos con un clasificador simple usando puertas lógicas y posteriormente con el proyecto de un clasificador de dígitos y de caras para terminar con el proyecto del pacman.
+      }
     \chapter{Ejercicios}
       \section{Perceptron}
+        \subsection{Descripción}
+          \paragraph*{}{
+
+          }
+        \subsection{Primera Implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación inicial del perceptron]
+          \end{lstlisting}
+        \subsection{Segunda Implementación}
+          \begin{lstlisting}[language=Python, caption=Implementación final del perceptron]
+class PerceptronClassifier:
+  """
+  Perceptron classifier.
+
+  Note that the variable 'datum' in this code refers to a counter of features
+  (not to a raw samples.Datum).
+  """
+
+  def __init__(self, legalLabels, max_iterations):
+      self.legalLabels = legalLabels
+      self.type = "perceptron"
+      self.max_iterations = max_iterations
+      self.weights = {}
+      self.features = None
+      for label in legalLabels:
+          self.weights[label] = util.Counter()  # this is the data-structure you should use
+
+  def setWeights(self, weights):
+      assert len(weights) == len(self.legalLabels)
+      self.weights = weights
+
+  def train(self, trainingData, trainingLabels, validationData, validationLabels):
+      """
+      The training loop for the perceptron passes through the training data several
+      times and updates the weight vector for each label based on classification errors.
+      See the project description for details.
+
+      Use the provided self.weights[label] data structure so that
+      the classify method works correctly. Also, recall that a
+      datum is a counter from features to values for those features
+      (and thus represents a vector a values).
+      """
+
+      self.features = trainingData[0].keys()  # could be useful later
+      # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
+      # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
+
+      for iteration in range(self.max_iterations):
+          print("Starting iteration ", iteration, "...")
+          for i in range(len(trainingData)):  # training data
+              # Obtener el ejemplo y su etiqueta real
+              x_i = trainingData[i]
+              y_i = trainingLabels[i]
+
+              # Calcular los puntajes para cada etiqueta
+              scores = util.Counter()
+              for label in self.legalLabels:
+                  scores[label] = self.weights[label] * x_i
+
+              # Predecir la etiqueta con el puntaje más alto
+              predicted_label = scores.argMax()
+
+              # Si la predicción es incorrecta, actualizar los pesos
+              if predicted_label != y_i:
+                  self.weights[y_i] += x_i
+                  self.weights[predicted_label] -= x_i
+
+  def classify(self, data):
+      """
+      Classifies each datum as the label that most closely matches the prototype vector
+      for that label.  See the project description for details.
+
+      Recall that a datum is a util.counter...
+      """
+      guesses = []
+      for datum in data:
+          vectors = util.Counter()
+          for label in self.legalLabels:
+              vectors[label] = self.weights[label] * datum
+          guesses.append(vectors.argMax())
+      return guesses
+
+  def findHighWeightFeatures(self, label):
+      """
+      Returns a list of the 100 features with the greatest weight for some label
+      """
+      # Obtener los pesos de los features para la etiqueta dada
+      weights = self.weights[label]
+
+      # Ordenar los features por peso en orden descendente
+      sorted_features = weights.sortedKeys()
+
+      # Seleccionar los 100 features con mayor peso
+      featuresWeights = sorted_features[:100]
+
+      return featuresWeights
+
+          \end{lstlisting}
+        \subsection{Casos de prueba}
       \section{Clonando el Comportamiento del Pacman}
       \section{Clonando el Comportamientodel Pacman con rasgos diseñados por nosotros}
     \chapter{Resultados}
       \section{Casos de prueba}
         \subsection{Perceptron}
+          \begin{lstlisting}[language=Python, caption=Ejecución del perceptron]
+python dataClassifier.py -c perceptron
+Doing classification
+--------------------
+data:           digits
+classifier:             perceptron
+using enhanced features?:       False
+training set size:      100
+Extracting features...
+Training...
+Starting iteration  0 ...
+Starting iteration  1 ...
+Starting iteration  2 ...
+Validating...
+55 correct out of 100 (55.0%).
+Testing...
+48 correct out of 100 (48.0%).            
+          \end{lstlisting}
         \subsection{Clonando el Comportamiento del Pacman}
         \subsection{Clonando el Comportamiento del Pacman con rasgos diseñados por nosotros}
       \section{Autograder}
+        \begin{lstlisting}[language=Python, caption=Ejecución del autograder]
+          
+        \end{lstlisting}
 \end{document}

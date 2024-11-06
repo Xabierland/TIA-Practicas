@@ -7,7 +7,7 @@ Practicas de la asignatura de técnicas de inteligencia artificial.
 - Laboratorio 0 - Introducción a Python
 - Laboratorio 1 - Problemas de Búsqueda
 - Laboratorio 2 - Búsqueda Multi-Agente
-- Laboratorio 3 -
+- Laboratorio 3 - Clasificación (Perceptrón)
 - Laboratorio 4 -
 
 ## Links
