@@ -48,5 +48,20 @@ class PerceptronClassifierPacman(PerceptronClassifier):
         for iteration in range(self.max_iterations):
             print("Starting iteration ", iteration, "...")
             for i in range(len(trainingData)):
-                "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+                # Obtener el ejemplo, el movimiento legal y la etiqueta
+                x_i, legalMoves = trainingData[i]
+                y_i = trainingLabels[i]
+                
+                # Calcular los puntajes para cada etiqueta
+                scores = util.Counter()
+                for move in legalMoves:
+                    scores[move] = self.weights * x_i[move]
+                
+                # Obtener la etiqueta con el puntaje más alto
+                predicted_move = scores.argMax()
+                
+                # Si la predicción es incorrecta, actualizar los pesos
+                if y_i != predicted_move:
+                    self.weights += x_i[y_i]
+                    self.weights -= x_i[predicted_move]
+                    

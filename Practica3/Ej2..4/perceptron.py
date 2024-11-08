@@ -68,8 +68,8 @@ class PerceptronClassifier:
                 scores = util.Counter()
                 for label in self.legalLabels:
                     scores[label] = self.weights[label] * x_i
-
-                # Predecir la etiqueta con el puntaje más alto
+              
+                # Obtener la etiqueta con el puntaje más alto
                 predicted_label = scores.argMax()
 
                 # Si la predicción es incorrecta, actualizar los pesos
