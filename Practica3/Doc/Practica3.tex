@@ -78,8 +78,8 @@
       \today
   \end{titlepage}
   \tableofcontents
-  \listoffigures
-  \listoftables
+  %\listoffigures
+  %\listoftables
   \lstlistoflistings
   \chapter{Introducción}
     \paragraph*{}{
@@ -320,7 +320,6 @@ xorGoldOutputs=[1,-1,-1,1]
 
 # Entrenando
 numeroVuelta = 0
-numeroVuelta = 0
 while xorConverge:
     xorConverge = False
     for i, my_x in enumerate(my_x_collection):
@@ -369,7 +368,7 @@ for my_x in my_x_collection:
     \cpsection{Perceptron}
       \subsection*{Descripción}
         \paragraph*{}{
-          El ejercicio consiste en implementar una función de entrenamiento para un modelo de perceptrón, con el objetivo de clasificar datos en diferentes categorías. 
+          El ejercicio consiste en implementar una función de entrenamiento para un modelo de perceptrón, con el objetivo de clasificar digitos en diferentes categorías.
           Este modelo de perceptrón es un tipo de algoritmo de aprendizaje supervisado que ajusta un vector de pesos en función de los errores de clasificación en el conjunto de entrenamiento.\\
 
           El perceptrón funciona de la siguiente manera:
@@ -381,91 +380,6 @@ for my_x in my_x_collection:
             \item Repetimos el proceso hasta que se alcance el número máximo de iteraciones o hasta que no haya errores de clasificación.
           \end{enumerate}
         }
-      \subsection*{Implementación Inicial}
-        \begin{lstlisting}[language=Python, caption=Implementación inicial del perceptron]
-class PerceptronClassifier:
-  """
-  Perceptron classifier.
-
-  Note that the variable 'datum' in this code refers to a counter of features
-  (not to a raw samples.Datum).
-  """
-
-  def __init__(self, legalLabels, max_iterations):
-      self.legalLabels = legalLabels
-      self.type = "perceptron"
-      self.max_iterations = max_iterations
-      self.weights = {}
-      self.features = None
-      for label in legalLabels:
-          self.weights[label] = util.Counter()  # this is the data-structure you should use
-
-  def setWeights(self, weights):
-      assert len(weights) == len(self.legalLabels)
-      self.weights = weights
-
-  def train(self, trainingData, trainingLabels, validationData, validationLabels):
-      """
-      The training loop for the perceptron passes through the training data several
-      times and updates the weight vector for each label based on classification errors.
-      See the project description for details.
-
-      Use the provided self.weights[label] data structure so that
-      the classify method works correctly. Also, recall that a
-      datum is a counter from features to values for those features
-      (and thus represents a vector a values).
-      """
-
-      self.features = trainingData[0].keys()  # could be useful later
-      # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
-      # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
-
-      for iteration in range(self.max_iterations):
-          print("Starting iteration ", iteration, "...")
-          for i in range(len(trainingData)):  # training data
-              # Obtener el ejemplo y su etiqueta real
-              x_i = trainingData[i]
-              y_i = trainingLabels[i]
-
-              scores = {label: datum * self.weights[label] for label in self.weights}
-              
-              predicted_label = max(scores, key=scores.get)
-
-              # Si la predicción es incorrecta, actualizar los pesos
-              if predicted_label != y_i:
-                  self.weights[y_i] += x_i
-                  self.weights[predicted_label] -= x_i
-
-  def classify(self, data):
-      """
-      Classifies each datum as the label that most closely matches the prototype vector
-      for that label.  See the project description for details.
-
-      Recall that a datum is a util.counter...
-      """
-      guesses = []
-      for datum in data:
-          vectors = util.Counter()
-          for label in self.legalLabels:
-              vectors[label] = self.weights[label] * datum
-          guesses.append(vectors.argMax())
-      return guesses
-
-  def findHighWeightFeatures(self, label):
-      """
-      Returns a list of the 100 features with the greatest weight for some label
-      """
-      # Obtener los pesos de los features para la etiqueta dada
-      weights = self.weights[label]
-
-      # Ordenar los features por peso en orden descendente
-      sorted_features = weights.sortedKeys()
-
-      # Seleccionar los 100 features con mayor peso
-      featuresWeights = sorted_features[:100]
-
-      return featuresWeights
-        \end{lstlisting}
       \subsection*{Implementación Final}
         \begin{lstlisting}[language=Python, caption=Implementación final del perceptron]
 class PerceptronClassifier:
@@ -557,12 +471,16 @@ class PerceptronClassifier:
         \end{lstlisting}
       \subsection*{Conclusiones}
         \paragraph*{}{
-
+          La implementación del perceptron es bastante diferente a lo que hemos empezado haciendo en el ejercicio de las puertas lógicas aunque la idea es la misma.
+          La diferencia es que ya no tenemos una clasificación binaria sino que tenemos varias etiquetas y por lo tanto tenemos que calcular los puntajes para cada etiqueta y predecir la etiqueta con el puntaje más alto.
+          Esto, tambien provoca que las actualizaciones de los pesos sean diferentes ya que ahora tenemos que actualizar los pesos de la etiqueta correcta y de la etiqueta predicha.
+          De esta forma, sumando a la etiqueta correcta y restando a la etiqueta predicha conseguimos que la etiqueta correcta se vuelve cada vez más probable en comparación con las etiquetas incorrectas.
         }
     \cpsection{Clonando el Comportamiento del Pacman}
       \subsection*{Descripción}
         \paragraph*{}{
-
+          En este ejercicio se implementará un clonador de comportamiento para el agente Pacman, utilizando un modelo de perceptrón para clasificar los movimientos legales en un estado de juego.
+          El objetivo es entrenar el clonador para que pueda predecir el movimiento correcto del Pacman en función de las características de un estado de juego.\\
         }
       \subsection*{Primera Implementación}
         \begin{lstlisting}[language=Python, caption=Implementación inicial del clonador de comportamiento del pacman]
@@ -613,6 +531,7 @@ class PerceptronClassifierPacman(PerceptronClassifier):
                     self.weights[y_i] += x_i[predicted_move]['foodCount']
                     self.weights[predicted_move] -= x_i[predicted_move]['foodCount']
         \end{lstlisting}
+        \vfill
       \subsection*{Final Implementación}
         \begin{lstlisting}[language=Python, caption=Implementación final del clonador de comportamiento del pacman]
 class PerceptronClassifierPacman(PerceptronClassifier):
@@ -662,26 +581,25 @@ class PerceptronClassifierPacman(PerceptronClassifier):
         \end{lstlisting}
       \subsection*{Conclusiones}
         \paragraph*{}{
-          En este ejercicio nos hemos hecho un poco lio con la estructura de los datos ya que ahora trainingData es la que tiene la lista de movimientos legales y no la instancia.
-          Tambien en un principio he intentado multiplicar el peso por el dato pero de esa forma solo se multiplicaba el peso por el primer dato y no por todos los datos.
-          Ademas al final nos hemos liado y he sumado la etiqueta predecida en vez de la correcta.\\
+          En este ejercicio nos hemos hecho un poco lio con las estructuras, especialmente, con las del peso (Por no leer bien el enunciado para variar).
+          Lo principal es que ahora trainingData es una lista con dos elementos, el primero es un diccionario con los movimientos y sus valores y el segundo es una lista con los movimientos legales.
+          Tambien el self.weights es un vector de pesos unicos en vez de un diccionario ya que ahora estas con las clasificación de decisiones por lo que el vector de pesos es compartido mientras que antes era un diccionario con los pesos de cada etiqueta.\\
 
-          No obstante, todo se ha solucionado en la implementación final.
+          Teniendo en cuenta esto, la implementación es bastante similiar a la del Perceptron del ejercicio anterior.
         }
     \cpsection{Clonando el Comportamientodel Pacman con rasgos diseñados por nosotros}
       \subsection*{Descripción}
         \paragraph*{}{
+          En este ejercicio tendremos que definir nuestros propios rasgos para el clonador de comportamiento del Pacman y entrenar el modelo de perceptrón con estos rasgos.
+          En este caso, el ejercicio ya se nos da implementado por lo que solamente explicaremos en el apartado de Conclusiones el porqué de los rasgos elegidos.
+        }
+      \subsection*{Implementación}
+        \begin{lstlisting}[language=Python, caption=Implementación del clonador de comportamiento del pacman con rasgos diseñados por nosotros]
+          
+      \subsection*{Conclusiones}
+        \paragraph*{}{
 
         }
-      \subsection*{Implementación Inicial}
-        \begin{lstlisting}[language=Python, caption=Implementación inicial del clonador de comportamiento del pacman con rasgos diseñados por nosotros]
-          
-        \end{lstlisting}
-      \subsection*{Implementación Final}
-        \begin{lstlisting}[language=Python, caption=Implementación inicial del clonador de comportamiento del pacman con rasgos diseñados por nosotros]
-            
-        \end{lstlisting}
-      \subsection*{Conclusiones}
   \chapter{Resultados}
     \section{Casos de prueba}
       \subsection{Perceptron}
@@ -744,10 +662,32 @@ Validating...
 83 correct out of 100 (83.0%).
 Testing...
 80 correct out of 100 (80.0%).
+
+python dataClassifier.py -c perceptron -d pacman -i 9
+Doing classification
+--------------------
+data:           pacman
+classifier:             perceptron
+using enhanced features?:       False
+training set size:      100
+Extracting features...
+Training...
+Starting iteration  0 ...
+Starting iteration  1 ...
+Starting iteration  2 ...
+Starting iteration  3 ...
+Starting iteration  4 ...
+Starting iteration  5 ...
+Starting iteration  6 ...
+Starting iteration  7 ...
+Starting iteration  8 ...
+Validating...
+83 correct out of 100 (83.0%).
+Testing...
+80 correct out of 100 (80.0%).
         \end{lstlisting}
       \subsection{Clonando el Comportamiento del Pacman con rasgos diseñados por nosotros}
-
-    \section{Autograder}
+    \cpsection{Autograder}
         \begin{lstlisting}[language=Python, caption=Ejecución del autograder]
 python autograder.py
 Extracting features...
@@ -838,8 +778,6 @@ Question q4: 4/4
 Total: 12/12
 
 Your grades are NOT yet registered.  To register your grades, make sure
-to follow your instructor's guidelines to receive credit on your project.
-          
-                    
+to follow your instructor's guidelines to receive credit on your project.           
         \end{lstlisting}
 \end{document}

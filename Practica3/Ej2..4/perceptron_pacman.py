@@ -43,7 +43,7 @@ class PerceptronClassifierPacman(PerceptronClassifier):
     def train(self, trainingData, trainingLabels, validationData, validationLabels):
         self.features = trainingData[0][0]['Stop'].keys()  # could be useful later
         # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
-        # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
+        # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.    
 
         for iteration in range(self.max_iterations):
             print("Starting iteration ", iteration, "...")
@@ -56,12 +56,13 @@ class PerceptronClassifierPacman(PerceptronClassifier):
                 scores = util.Counter()
                 for move in legalMoves:
                     scores[move] = self.weights * x_i[move]
-                
-                # Obtener la etiqueta con el puntaje más alto
+                                
+                # Obtener la etiqueta con el puntaje más alto                
                 predicted_move = scores.argMax()
                 
                 # Si la predicción es incorrecta, actualizar los pesos
-                if y_i != predicted_move:
+                if y_i != predicted_move:                 
                     self.weights += x_i[y_i]
                     self.weights -= x_i[predicted_move]
+                    
                     

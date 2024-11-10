@@ -135,7 +135,7 @@ def enhancedPacmanFeatures(state, action):
     # pdb.set_trace()
 
     minD = 10000000000
-    for ghost in state.getGhostPositions():
+    for ghost in ghostPositions:
         d = util.manhattanDistance(pac, ghost)
         minD = min(d, minD)
 
