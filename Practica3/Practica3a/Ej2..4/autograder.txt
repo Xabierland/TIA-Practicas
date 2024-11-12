@@ -1,0 +1,90 @@
+Extracting features...
+Extracting features...
+Starting on 11-8 at 18:30:14
+
+Question q2
+===========
+
+Starting iteration  0 ...
+Starting iteration  1 ...
+Starting iteration  2 ...
+Starting iteration  3 ...
+79 correct out of 100 (79.0%).
+*** PASS: test_cases/q2/grade.test (4 of 4 points)
+***     79.0 correct (4 of 4 points)
+***         Grading scheme:
+***          < 70:  0 points
+***         >= 70:  4 points
+
+### Question q2: 4/4 ###
+
+
+Question q3
+===========
+
+Starting iteration  0 ...
+Starting iteration  1 ...
+Starting iteration  2 ...
+Starting iteration  3 ...
+Starting iteration  4 ...
+80 correct out of 100 (80.0%).
+*** PASS: test_cases/q3/contest.test (2 of 2 points)
+***     80.0 correct (2 of 2 points)
+***         Grading scheme:
+***          < 70:  0 points
+***         >= 70:  2 points
+Starting iteration  0 ...
+Starting iteration  1 ...
+Starting iteration  2 ...
+Starting iteration  3 ...
+Starting iteration  4 ...
+72 correct out of 100 (72.0%).
+*** PASS: test_cases/q3/suicide.test (2 of 2 points)
+***     72.0 correct (2 of 2 points)
+***         Grading scheme:
+***          < 70:  0 points
+***         >= 70:  2 points
+
+### Question q3: 4/4 ###
+
+
+Question q4
+===========
+
+Starting iteration  0 ...
+Starting iteration  1 ...
+Starting iteration  2 ...
+Starting iteration  3 ...
+95 correct out of 100 (95.0%).
+*** PASS: test_cases/q4/contest.test (2 of 2 points)
+***     95.0 correct (2 of 2 points)
+***         Grading scheme:
+***          < 90:  0 points
+***         >= 90:  2 points
+Starting iteration  0 ...
+Starting iteration  1 ...
+Starting iteration  2 ...
+Starting iteration  3 ...
+85 correct out of 100 (85.0%).
+*** PASS: test_cases/q4/suicide.test (2 of 2 points)
+***     85.0 correct (2 of 2 points)
+***         Grading scheme:
+***          < 80:  0 points
+***         >= 80:  2 points
+
+### Question q4: 4/4 ###
+
+
+Finished at 18:30:29
+
+Provisional grades
+==================
+Question q2: 4/4
+Question q3: 4/4
+Question q4: 4/4
+------------------
+Total: 12/12
+
+Your grades are NOT yet registered.  To register your grades, make sure
+to follow your instructor's guidelines to receive credit on your project.
+
