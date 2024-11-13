@@ -1,7 +1,5 @@
 import nn
 
-
-
 class RegressionModel(object):
     """
     A neural network model for approximating a function that maps from real
@@ -13,19 +11,25 @@ class RegressionModel(object):
     def __init__(self):
         # Initialize your model parameters here
         # For example:
-        # self.batch_size = 20
-        # self.w0 = nn.Parameter(1, 5)
-        # self.b0 = nn.Parameter(1, 5)
-        # self.w1 = nn.Parameter(5, 1)
-        # self.b1 = nn.Parameter(1, 1)
-        # self.lr = -0.01
-        #
-        "*** YOUR CODE HERE ***"
-
-
-
-
-
+        self.batch_size = 4
+        # Layer 0
+        self.w0 = nn.Parameter(1, 200)
+        self.b0 = nn.Parameter(1, 200)
+        # Layer 1
+        self.w1 = nn.Parameter(200, 200)
+        self.b1 = nn.Parameter(1, 200)
+        # Layer 2
+        self.w2 = nn.Parameter(200, 200)
+        self.b2 = nn.Parameter(1, 200)
+        # Layer 3
+        self.w3 = nn.Parameter(200, 200)
+        self.b3 = nn.Parameter(1, 200)
+        # Layer 4
+        self.w4 = nn.Parameter(200, 1)
+        self.b4 = nn.Parameter(1, 1)
+        # Learning rate
+        self.lr = -0.009
+        
     def run(self, x):
         """
         Runs the model for a batch of examples.
@@ -36,14 +40,12 @@ class RegressionModel(object):
             A node with shape (batch_size x 1) containing predicted y-values.
             Como es un modelo de regresion, cada valor y tambien tendra un unico valor
         """
-        "*** YOUR CODE HERE ***"
-
-
-
-
-
-
-
+        layer1 = nn.ReLU(nn.AddBias(nn.Linear(x, self.w0), self.b0))
+        layer2 = nn.ReLU(nn.AddBias(nn.Linear(layer1, self.w1), self.b1))
+        layer3 = nn.ReLU(nn.AddBias(nn.Linear(layer2, self.w2), self.b2))
+        layer4 = nn.ReLU(nn.AddBias(nn.Linear(layer3, self.w3), self.b3))
+        return nn.AddBias(nn.Linear(layer4, self.w4), self.b4)
+        
     def get_loss(self, x, y):
         """
         Computes the loss for a batch of examples.
@@ -56,12 +58,7 @@ class RegressionModel(object):
                 ----> ES FACIL COPIA Y PEGA ESTO Y ANNADE LA VARIABLE QUE HACE FALTA PARA CALCULAR EL ERROR 
                 return nn.SquareLoss(self.run(x),ANNADE LA VARIABLE QUE ES NECESARIA AQUI), para medir el error, necesitas comparar el resultado de tu prediccion con .... que?
         """
-        "*** YOUR CODE HERE ***"
-
-
-
-
-
+        return nn.SquareLoss(self.run(x), y)
 
     def train(self, dataset):
         """
@@ -71,18 +68,26 @@ class RegressionModel(object):
         
         batch_size = self.batch_size
         total_loss = 100000
-        while total_loss > 0.02:
-            #ITERAR SOBRE EL TRAIN EN LOTES MARCADOS POR EL BATCH SIZE COMO HABEIS HECHO EN LOS OTROS EJERCICIOS
-            #ACTUALIZAR LOS PESOS EN BASE AL ERROR loss = self.get_loss(x, y) QUE RECORDAD QUE GENERA
-            #UNA FUNCION DE LA LA CUAL SE  PUEDE CALCULAR LA DERIVADA (GRADIENTE)
-
-            "*** YOUR CODE HERE ***"
-
-
-
-
-
+        while True:
+            total_loss = 0
+            for x, y in dataset.iterate_once(batch_size):
+                loss = self.get_loss(x, y)
+                total_loss = nn.as_scalar(loss)
+                grad_wrt_w0, grad_wrt_b0, grad_wrt_w1, grad_wrt_b1, grad_wrt_w2, grad_wrt_b2, grad_wrt_w3, grad_wrt_b3, grad_wrt_w4, grad_wrt_b4 = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2, self.w3, self.b3, self.w4, self.b4])
+                self.w0.update(grad_wrt_w0, self.lr)
+                self.b0.update(grad_wrt_b0, self.lr)
+                self.w1.update(grad_wrt_w1, self.lr)
+                self.b1.update(grad_wrt_b1, self.lr)
+                self.w2.update(grad_wrt_w2, self.lr)
+                self.b2.update(grad_wrt_b2, self.lr)
+                self.w3.update(grad_wrt_w3, self.lr)
+                self.b3.update(grad_wrt_b3, self.lr)
+                self.w4.update(grad_wrt_w4, self.lr)
+                self.b4.update(grad_wrt_b4, self.lr)
             
+            if total_loss < 0.02:
+                break
+
 class DigitClassificationModel(object):
     """
     A model for handwritten digit classification using the MNIST dataset.
