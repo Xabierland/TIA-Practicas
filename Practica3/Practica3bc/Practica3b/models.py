@@ -9,26 +9,19 @@ class RegressionModel(object):
     SI ME DAN X TENGO QUE APRENDER A OBTENER LA MISMA Y QUE EN LA FUNCION ORIGINAL DE LA QUE QUIERO APRENDER
     """
     def __init__(self):
-        # Initialize your model parameters here
-        # For example:
+        # Tamaño del batch
         self.batch_size = 4
         # Layer 0
-        self.w0 = nn.Parameter(1, 200)
-        self.b0 = nn.Parameter(1, 200)
+        self.w0 = nn.Parameter(1, 5)
+        self.b0 = nn.Parameter(1, 5)
         # Layer 1
-        self.w1 = nn.Parameter(200, 200)
-        self.b1 = nn.Parameter(1, 200)
+        self.w1 = nn.Parameter(5, 5)
+        self.b1 = nn.Parameter(1, 5)
         # Layer 2
-        self.w2 = nn.Parameter(200, 200)
-        self.b2 = nn.Parameter(1, 200)
-        # Layer 3
-        self.w3 = nn.Parameter(200, 200)
-        self.b3 = nn.Parameter(1, 200)
-        # Layer 4
-        self.w4 = nn.Parameter(200, 1)
-        self.b4 = nn.Parameter(1, 1)
+        self.w2 = nn.Parameter(5, 1)
+        self.b2 = nn.Parameter(1, 1)
         # Learning rate
-        self.lr = -0.009
+        self.lr = -0.01
         
     def run(self, x):
         """
@@ -40,11 +33,9 @@ class RegressionModel(object):
             A node with shape (batch_size x 1) containing predicted y-values.
             Como es un modelo de regresion, cada valor y tambien tendra un unico valor
         """
-        layer1 = nn.ReLU(nn.AddBias(nn.Linear(x, self.w0), self.b0))
-        layer2 = nn.ReLU(nn.AddBias(nn.Linear(layer1, self.w1), self.b1))
-        layer3 = nn.ReLU(nn.AddBias(nn.Linear(layer2, self.w2), self.b2))
-        layer4 = nn.ReLU(nn.AddBias(nn.Linear(layer3, self.w3), self.b3))
-        return nn.AddBias(nn.Linear(layer4, self.w4), self.b4)
+        layer0 = nn.ReLU(nn.AddBias(nn.Linear(x, self.w0), self.b0))
+        layer1 = nn.ReLU(nn.AddBias(nn.Linear(layer0, self.w1), self.b1))
+        return nn.AddBias(nn.Linear(layer1, self.w2), self.b2)
         
     def get_loss(self, x, y):
         """
@@ -67,23 +58,18 @@ class RegressionModel(object):
         """
         
         batch_size = self.batch_size
-        total_loss = 100000
         while True:
             total_loss = 0
             for x, y in dataset.iterate_once(batch_size):
                 loss = self.get_loss(x, y)
                 total_loss = nn.as_scalar(loss)
-                grad_wrt_w0, grad_wrt_b0, grad_wrt_w1, grad_wrt_b1, grad_wrt_w2, grad_wrt_b2, grad_wrt_w3, grad_wrt_b3, grad_wrt_w4, grad_wrt_b4 = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2, self.w3, self.b3, self.w4, self.b4])
+                grad_wrt_w0, grad_wrt_b0, grad_wrt_w1, grad_wrt_b1, grad_wrt_w2, grad_wrt_b2 = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2])
                 self.w0.update(grad_wrt_w0, self.lr)
                 self.b0.update(grad_wrt_b0, self.lr)
                 self.w1.update(grad_wrt_w1, self.lr)
                 self.b1.update(grad_wrt_b1, self.lr)
                 self.w2.update(grad_wrt_w2, self.lr)
                 self.b2.update(grad_wrt_b2, self.lr)
-                self.w3.update(grad_wrt_w3, self.lr)
-                self.b3.update(grad_wrt_b3, self.lr)
-                self.w4.update(grad_wrt_w4, self.lr)
-                self.b4.update(grad_wrt_b4, self.lr)
             
             if total_loss < 0.02:
                 break
@@ -107,58 +93,53 @@ class DigitClassificationModel(object):
         # TEN ENCUENTA QUE TIENES 10 CLASES, ASI QUE LA ULTIMA CAPA TENDRA UNA SALIDA DE 10 VALORES,
         # UN VALOR POR CADA CLASE
 
-        output_size = 10 # TAMANO EQUIVALENTE AL NUMERO DE CLASES DADO QUE QUIERES OBTENER 10 CLASES
-        pixel_dim_size = 28
-        pixel_vector_length = pixel_dim_size* pixel_dim_size
- 
-        "*** YOUR CODE HERE ***"
+        # Tamaño del batch
+        self.batch_size = 10
+        
+        # Learning rate
+        self.lr = -0.01
 
-     
+        # Tamaño de salida
+        output_size = 10
+        
+        # Dimensiones de la imagen
+        pixel_vector_length = 28 * 28
+ 
+        # Inicializa los pesos y sesgos
+        # Layer 0
+        self.w0 = nn.Parameter(pixel_vector_length, 100)
+        self.b0 = nn.Parameter(1, 100)
+        # Layer 1
+        self.w1 = nn.Parameter(100, 100)
+        self.b1 = nn.Parameter(1, 100)
+        # Layer 2
+        self.w2 = nn.Parameter(100, output_size)
+        self.b2 = nn.Parameter(1, output_size)
 
     def run(self, x):
         """
-        Runs the model for a batch of examples.
-
-        Your model should predict a node with shape (batch_size x 10),
-        containing scores. Higher scores correspond to greater probability of
-        the image belonging to a particular class.
-
+        Corre el modelo para un lote de ejemplos.
+        
         Inputs:
-            x: a node with shape (batch_size x 784)
-        Output:
-            A node with shape (batch_size x 10) containing predicted scores
-                (also called logits)
-            output_size = 10 # TAMANO EQUIVALENTE AL NUMERO DE CLASES DADO QUE QUIERES OBTENER 10 "COSENOS"
+            x: un nodo con forma (batch_size x 784)
+        Returns:
+            Un nodo con forma (batch_size x 10) que contiene los valores predichos de y.
         """
-        "*** YOUR CODE HERE ***"
-
-
-
-
+        layer0 = nn.ReLU(nn.AddBias(nn.Linear(x, self.w0), self.b0))
+        layer1 = nn.ReLU(nn.AddBias(nn.Linear(layer0, self.w1), self.b1))
+        return nn.AddBias(nn.Linear(layer1, self.w2), self.b2)
 
     def get_loss(self, x, y):
         """
-        Computes the loss for a batch of examples.
-
-        The correct labels `y` are represented as a node with shape
-        (batch_size x 10). Each row is a one-hot vector encoding the correct
-        digit class (0-9).
-        POR EJEMPLO: [0,0,0,0,0,1,0,0,0,0,0] seria la y correspondiente al 5
-                     [0,1,0,0,0,0,0,0,0,0,0] seria la y correspondiente al 1
-
-        EN ESTE CASO ESTAMOS HABLANDO DE MULTICLASS, ASI QUE TIENES QUE CALCULAR 
+        Calcula la pérdida para un lote de ejemplos.
+        
         Inputs:
-            x: a node with shape (batch_size x 784)
-            y: a node with shape (batch_size x 10)
-        Returns: a loss node
+            x: un nodo con forma (batch_size x 784) que se mete en la red para obtener las predicciones.
+            y: un nodo con forma (batch_size x 10), que contiene los verdaderos valores y que se utilizarán para el entrenamiento.
+        Returns: un nodo de pérdida
         """
-        "*** YOUR CODE HERE ***"#NO ES NECESARIO QUE LO IMPLEMENTEIS, SE OS DA HECHO
-        return nn.SoftmaxLoss(self.run(x), y) # COMO VEIS LLAMA AL RUN PARA OBTENER POR CADA BATCH
-                                              # LOS 10 VALORES DEL "COSENO". TENIENDO EL Y REAL POR CADA EJEMPLO
-                                              # APLICA SOFTMAX PARA CALCULAR LA PROBABILIDA MAX
-                                              # Y ESA SERA SU PREDICCION,
-                                              # LA CLASE QUE MUESTRE EL MAYOR PROBABILIDAD, LA PREDICCION MAS PROBABLE, Y LUEGO LA COMPARARA CON Y 
-
+        return nn.SoftmaxLoss(self.run(x), y) 
+    
     def train(self, dataset):
         """
         Trains the model.
@@ -167,13 +148,19 @@ class DigitClassificationModel(object):
         NO LO TENEIS QUE IMPLEMENTAR, PERO SABED QUE EMPLEA EL RESULTADO DEL SOFTMAX PARA CALCULAR
         EL NUM DE EJEMPLOS DEL TRAIN QUE SE HAN CLASIFICADO CORRECTAMENTE 
         """
-        batch_size = self.batch_size
         while dataset.get_validation_accuracy() < 0.97:
-            #ITERAR SOBRE EL TRAIN EN LOTES MARCADOS POR EL BATCH SIZE COMO HABEIS HECHO EN LOS OTROS EJERCICIOS
-            #ACTUALIZAR LOS PESOS EN BASE AL ERROR loss = self.get_loss(x, y) QUE RECORDAD QUE GENERA
-            #UNA FUNCION DE LA LA CUAL SE  PUEDE CALCULAR LA DERIVADA (GRADIENTE)
-            "*** YOUR CODE HERE ***"
+            # Iterar sobre el dataset en lotes.
+            for x, y in dataset.iterate_once(self.batch_size):
+                # Calcula la pérdida.
+                loss = self.get_loss(x, y)
 
+                # Calcula el gradiente de los pesos y sesgos con respecto a la pérdida.
+                gradients = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2])
 
-
-
+                # Actualiza los pesos y sesgos usando gradiente descendente.
+                self.w0.update(gradients[0], self.lr)
+                self.b0.update(gradients[1], self.lr)
+                self.w1.update(gradients[2], self.lr)
+                self.b1.update(gradients[3], self.lr)
+                self.w2.update(gradients[4], self.lr)
+                self.b2.update(gradients[5], self.lr)
