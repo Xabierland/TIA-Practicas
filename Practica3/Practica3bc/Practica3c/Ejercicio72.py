@@ -1,10 +1,3 @@
-"""
-Ejercicio 7: Implementar diferentes técnicas de regularización en el modelo de clasificación de sentimientos de la tarea anterior.
-Estoy usando:
-  - L2 regularization
-  - Dropout
-"""
-
 # === Librerías ===
 
 import numpy as np

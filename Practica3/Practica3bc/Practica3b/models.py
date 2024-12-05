@@ -12,16 +12,19 @@ class RegressionModel(object):
         # Tamaño del batch
         self.batch_size = 4
         # Layer 0
-        self.w0 = nn.Parameter(1, 5)
-        self.b0 = nn.Parameter(1, 5)
+        self.w0 = nn.Parameter(1, 10)
+        self.b0 = nn.Parameter(1, 10)
         # Layer 1
-        self.w1 = nn.Parameter(5, 5)
-        self.b1 = nn.Parameter(1, 5)
+        self.w1 = nn.Parameter(10, 10)
+        self.b1 = nn.Parameter(1, 10)
         # Layer 2
-        self.w2 = nn.Parameter(5, 1)
-        self.b2 = nn.Parameter(1, 1)
+        self.w2 = nn.Parameter(10, 10)
+        self.b2 = nn.Parameter(1, 10)
+        # Layer 3
+        self.w3 = nn.Parameter(10, 1)
+        self.b3 = nn.Parameter(1, 1)
         # Learning rate
-        self.lr = -0.01
+        self.lr = -0.005
         
     def run(self, x):
         """
@@ -35,7 +38,8 @@ class RegressionModel(object):
         """
         layer0 = nn.ReLU(nn.AddBias(nn.Linear(x, self.w0), self.b0))
         layer1 = nn.ReLU(nn.AddBias(nn.Linear(layer0, self.w1), self.b1))
-        return nn.AddBias(nn.Linear(layer1, self.w2), self.b2)
+        layer2 = nn.ReLU(nn.AddBias(nn.Linear(layer1, self.w2), self.b2))
+        return nn.AddBias(nn.Linear(layer2, self.w3), self.b3)
         
     def get_loss(self, x, y):
         """
@@ -63,13 +67,15 @@ class RegressionModel(object):
             for x, y in dataset.iterate_once(batch_size):
                 loss = self.get_loss(x, y)
                 total_loss = nn.as_scalar(loss)
-                grad_wrt_w0, grad_wrt_b0, grad_wrt_w1, grad_wrt_b1, grad_wrt_w2, grad_wrt_b2 = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2])
+                grad_wrt_w0, grad_wrt_b0, grad_wrt_w1, grad_wrt_b1, grad_wrt_w2, grad_wrt_b2, grad_wrt_w3, grad_wrt_b3 = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2, self.w3, self.b3])
                 self.w0.update(grad_wrt_w0, self.lr)
                 self.b0.update(grad_wrt_b0, self.lr)
                 self.w1.update(grad_wrt_w1, self.lr)
                 self.b1.update(grad_wrt_b1, self.lr)
                 self.w2.update(grad_wrt_w2, self.lr)
                 self.b2.update(grad_wrt_b2, self.lr)
+                self.w3.update(grad_wrt_w3, self.lr)
+                self.b3.update(grad_wrt_b3, self.lr)
             
             if total_loss < 0.02:
                 break
@@ -97,7 +103,7 @@ class DigitClassificationModel(object):
         self.batch_size = 10
         
         # Learning rate
-        self.lr = -0.01
+        self.lr = -0.1
 
         # Tamaño de salida
         output_size = 10
@@ -113,8 +119,14 @@ class DigitClassificationModel(object):
         self.w1 = nn.Parameter(100, 100)
         self.b1 = nn.Parameter(1, 100)
         # Layer 2
-        self.w2 = nn.Parameter(100, output_size)
-        self.b2 = nn.Parameter(1, output_size)
+        self.w2 = nn.Parameter(100, 100)
+        self.b2 = nn.Parameter(1, 100)
+        # Layer 3
+        self.w3 = nn.Parameter(100, 100)
+        self.b3 = nn.Parameter(1, 100)
+        # Layer 4
+        self.w4 = nn.Parameter(100, output_size)
+        self.b4 = nn.Parameter(1, output_size)
 
     def run(self, x):
         """
@@ -127,7 +139,9 @@ class DigitClassificationModel(object):
         """
         layer0 = nn.ReLU(nn.AddBias(nn.Linear(x, self.w0), self.b0))
         layer1 = nn.ReLU(nn.AddBias(nn.Linear(layer0, self.w1), self.b1))
-        return nn.AddBias(nn.Linear(layer1, self.w2), self.b2)
+        layer2 = nn.ReLU(nn.AddBias(nn.Linear(layer1, self.w2), self.b2))
+        layer3 = nn.ReLU(nn.AddBias(nn.Linear(layer2, self.w3), self.b3))
+        return nn.AddBias(nn.Linear(layer3, self.w4), self.b4)
 
     def get_loss(self, x, y):
         """
@@ -148,14 +162,14 @@ class DigitClassificationModel(object):
         NO LO TENEIS QUE IMPLEMENTAR, PERO SABED QUE EMPLEA EL RESULTADO DEL SOFTMAX PARA CALCULAR
         EL NUM DE EJEMPLOS DEL TRAIN QUE SE HAN CLASIFICADO CORRECTAMENTE 
         """
-        while dataset.get_validation_accuracy() < 0.97:
+        while dataset.get_validation_accuracy() < 0.975:
             # Iterar sobre el dataset en lotes.
             for x, y in dataset.iterate_once(self.batch_size):
                 # Calcula la pérdida.
                 loss = self.get_loss(x, y)
 
                 # Calcula el gradiente de los pesos y sesgos con respecto a la pérdida.
-                gradients = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2])
+                gradients = nn.gradients(loss, [self.w0, self.b0, self.w1, self.b1, self.w2, self.b2, self.w3, self.b3, self.w4, self.b4])
 
                 # Actualiza los pesos y sesgos usando gradiente descendente.
                 self.w0.update(gradients[0], self.lr)
@@ -164,3 +178,7 @@ class DigitClassificationModel(object):
                 self.b1.update(gradients[3], self.lr)
                 self.w2.update(gradients[4], self.lr)
                 self.b2.update(gradients[5], self.lr)
+                self.w3.update(gradients[6], self.lr)
+                self.b3.update(gradients[7], self.lr)
+                self.w4.update(gradients[8], self.lr)
+                self.b4.update(gradients[9], self.lr)
