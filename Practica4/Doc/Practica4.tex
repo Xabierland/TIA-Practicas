@@ -1,0 +1,328 @@
+\documentclass{report}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx, longtable, float, titlesec, hyperref, enumitem, dingbat, soul, multicol, listings}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[margin=2cm]{geometry}
+
+% Cambia el color de los links
+\hypersetup{hidelinks}
+
+% Generamos un comando para saltar pagina con las secciones
+\NewDocumentCommand{\cpsection}{s o m}{%
+  \clearpage
+  \IfBooleanTF{#1}
+    {\section*{#3}}
+    {%
+      \IfNoValueTF{#2}
+        {\section{#3}}
+        {\section[#2]{#3}}%
+    }%
+}
+
+% Python Code
+\lstdefinestyle{Python}{
+  commentstyle=\color{brown},
+  keywordstyle=\color{violet},
+  numberstyle=\tiny\color{gray},
+  stringstyle=\color{purple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  literate={ñ}{{\~n}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+}
+\lstset{style=Python}
+
+% Elimina la palabra "Capítulo" de los títulos de los capítulos
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge\thechapter.\space}
+
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
+
+% Personalización del índice de listados
+\renewcommand{\lstlistingname}{Código}  % Cambiar el nombre de "Listing" a "Código"
+\renewcommand{\lstlistlistingname}{Índice de Códigos}
+
+% Añade numeración a los subsubsection*s y los añade al índice
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\begin{document}
+  \begin{titlepage}
+      \centering
+      \includegraphics[width=0.6\textwidth]{./.img/logo.jpg}\\
+      \vspace{1cm}
+      \LARGE Técnicas de Inteligencia Artificial\\
+      \vspace{0.5cm}
+      \Large Ingeniería Informática de Gestión y Sistemas de Información\\
+      \vspace{3cm}
+      \Huge Practica 4\\
+      \huge Reinforcement Learning\\
+      \vspace{2.5cm}
+      \Large Autor(es):\\
+      \vspace{0.2cm}
+      \large Xabier Gabiña\\
+      \large Diego Montoya\\
+      \vfill
+      \today
+  \end{titlepage}
+  \tableofcontents
+  %\listoffigures
+  %\listoftables
+  \lstlistoflistings
+  \chapter{Introducción}
+  \chapter{Ejercicios}
+    \section{Iteración de valores}
+      \subsection*{Descripción}
+        \paragraph*{}{
+          El primer ejercicio se trata de implementar un agente que realice la iteración de valores. 
+          Un agente de Iteración de Valores toma un proceso de decisión de Markov en la inicialización y ejecuta la iteración de valores durante un número dado de iteraciones utilizando el factor de descuento proporcionado.
+        }
+      \subsection*{Implementación}
+\begin{lstlisting}[language=Python, caption=Iteración de valores]
+class ValueIterationAgent(ValueEstimationAgent):
+    """
+        * Please read learningAgents.py before reading this.*
+
+        A ValueIterationAgent takes a Markov decision process
+        (see mdp.py) on initialization and runs value iteration
+        for a given number of iterations using the supplied
+        discount factor.
+    """
+    def __init__(self, mdp, discount = 0.9, iterations = 100):
+        """
+          Your value iteration agent should take an mdp on
+          construction, run the indicated number of iterations
+          and then act according to the resulting policy.
+
+          Some useful mdp methods you will use:
+              mdp.getStates()
+              mdp.getPossibleActions(state)
+              mdp.getTransitionStatesAndProbs(state, action)
+              mdp.getReward(state, action, nextState)
+              mdp.isTerminal(state)
+        """
+        self.mdp = mdp
+        self.discount = discount
+        self.iterations = iterations
+        self.values = util.Counter() # A Counter is a dict with default 0
+        self.runValueIteration()
+
+    def runValueIteration(self):
+        # Write value iteration code here
+        for _ in range(self.iterations):
+            new_values = self.values.copy()
+            for state in self.mdp.getStates():
+                if not self.mdp.isTerminal(state):
+                    new_values[state] = max(self.computeQValueFromValues(state, action) for action in self.mdp.getPossibleActions(state))
+            self.values = new_values
+
+
+    def getValue(self, state):
+        """
+          Return the value of the state (computed in __init__).
+        """
+        return self.values[state]
+
+
+    def computeQValueFromValues(self, state, action):
+        """
+        computeQValueFromValues(state, action) devuelve el valor Q del par (estado, acción)
+        dado por la función de valor dada por self.values. Nota: Recuerda que para calcular
+        el valor de un estado calcularemos los q_values (estado,acción), es decir los valores
+        de las acciones posibles para quedarnos con el mayor (max de entre los q_values).
+        """
+        q_value = 0
+        for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+            q_value += prob * (self.mdp.getReward(state, action, next_state) + self.discount * self.values[next_state])
+        return q_value
+        
+
+    def computeActionFromValues(self, state):
+        """
+        computeActionFromValues(state) calcula la mejor acción de acuerdo con la función de
+        valor dada por self.values. Es decir, de acuerdo al estado siguiente al que nos lleva
+        cada acción y que mayor valor tiene. Este método llamará al siguiente.
+        """
+        if self.mdp.isTerminal(state):
+            return None
+
+        return max(self.mdp.getPossibleActions(state), key=lambda x: self.computeQValueFromValues(state, x))
+        
+
+    def getPolicy(self, state):
+        return self.computeActionFromValues(state)
+
+    def getAction(self, state):
+        "Returns the policy at the state (no exploration)."
+        return self.computeActionFromValues(state)
+
+    def getQValue(self, state, action):
+        return self.computeQValueFromValues(state, action)
+
+    
+\end{lstlisting}
+      \subsection*{Comentarios}
+        \paragraph*{}{
+
+        }
+    \cpsection{Análisis de cruce de puentes}
+      \subsection*{Descripción}
+      \subsection*{Implementación}
+\begin{lstlisting}[language=Python, caption=Análisis de cruce de puentes]
+def question2():
+  answerDiscount = 0.9
+  answerNoise = 0.01
+  return answerDiscount, answerNoise
+
+if __name__ == '__main__':
+  print('Answers to analysis questions:')
+  import analysis
+  for q in [q for q in dir(analysis) if q.startswith('question')]:
+      response = getattr(analysis, q)()
+      print('  Question %s:\t%s' % (q, str(response)))
+\end{lstlisting}
+      \subsection*{Comentarios}
+        \paragraph*{}{
+          La solucion mas sencilla para este ejercicio es el de bajar el ruido por debajo de 0.01.
+          Esto hace que las probabilidades de que el agente cometa un error y se caiga a un acantilado de puntos negativos sean muy bajas.
+          No haria falta tocar el valor gamma ya que al tener un factor alto, lo que conseguimos, es que las recompensas futuras tengan un peso mayor lo que con conviene para no acabar llegando a la casilla +1 en vez de a la +10.
+        }
+    \cpsection{Q-Learning}
+      \subsection*{Descripción}
+        \paragraph*{}
+        {
+          En este ejercicio se trata de implementar un agente que realice el aprendizaje por refuerzo mediante Q-Learning.
+          Q-Learning es un algoritmo de aprendizaje por refuerzo que aprende una política óptima sin conocer el modelo del entorno.
+          Se basa en ir probando acciones, en un principio de forma aleatoria, y actualizando los valores de la función Q en función de las recompensas recibidas.
+          A medida que se va actualizando la función Q, el agente va aprendiendo la mejor acción a tomar en cada estado y va diminuyendo el numero de acciones aleatorias.
+        }
+      \subsection*{Implementación}
+\begin{lstlisting}[language=Python, caption=Q-Learning]
+class QLearningAgent(ReinforcementAgent):
+    """
+      Q-Learning Agent
+
+      Functions you should fill in:
+        - computeValueFromQValues
+        - computeActionFromQValues
+        - getQValue
+        - getAction
+        - update
+
+      Instance variables you have access to
+        - self.epsilon (exploration prob)
+        - self.alpha (learning rate)
+        - self.discount (discount rate)
+
+      Functions you should use
+        - self.getLegalActions(state)
+          which returns legal actions for a state
+    """
+    def __init__(self, **args):
+        "You can initialize Q-values here..."
+        ReinforcementAgent.__init__(self, **args)
+        self.qValues = util.Counter()
+
+    def getQValue(self, state, action):
+        """
+          Returns Q(state,action)
+          Should return 0.0 if we have never seen a state
+          or the Q node value otherwise
+        """
+        return self.qValues[(state, action)] if (state, action) in self.qValues else 0.0
+
+
+    def computeValueFromQValues(self, state):
+        """
+          Returns max_action Q(state,action)
+          where the max is over legal actions.  Note that if
+          there are no legal actions, which is the case at the
+          terminal state, you should return a value of 0.0.
+        """
+        legalActions = self.getLegalActions(state)
+        if not legalActions:
+          return 0.0
+        return max(self.getQValue(state, action) for action in legalActions)
+        
+    def computeActionFromQValues(self, state):
+        """
+          Compute the best action to take in a state.  Note that if there
+          are no legal actions, which is the case at the terminal state,
+          you should return None.
+        """
+        legalActions = self.getLegalActions(state)
+        if not legalActions:
+            return None
+
+        best_value = float('-inf')
+        best_actions = []
+        
+        for action in legalActions:
+            q_value = self.getQValue(state, action)
+            if q_value > best_value:
+              best_value = q_value
+              best_actions = [action]
+            elif q_value == best_value:
+              best_actions.append(action)
+        
+        return random.choice(best_actions)
+
+    def getAction(self, state):
+        """
+          Compute the action to take in the current state.  With
+          probability self.epsilon, we should take a random action and
+          take the best policy action otherwise.  Note that if there are
+          no legal actions, which is the case at the terminal state, you
+          should choose None as the action.
+
+          HINT: You might want to use util.flipCoin(prob)
+          HINT: To pick randomly from a list, use random.choice(list)
+        """
+        # Pick Action
+        legalActions = self.getLegalActions(state)
+        action = None
+        
+        if util.flipCoin(self.epsilon):
+            action = random.choice(legalActions)
+        else:
+            action = self.computeActionFromQValues(state)
+
+        return action
+
+    def update(self, state, action, nextState, reward):
+        """
+          The parent class calls this to observe a
+          state = action => nextState and reward transition.
+          You should do your Q-Value update here
+
+          NOTE: You should never call this function,
+          it will be called on your behalf
+        """
+        sample = reward + self.discount * self.computeValueFromQValues(nextState)
+        self.qValues[(state, action)] = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * sample
+
+    def getPolicy(self, state):
+        return self.computeActionFromQValues(state)
+
+    def getValue(self, state):
+        return self.computeValueFromQValues(state)
+
+\end{lstlisting}
+      \subsection*{Comentarios}
+        \paragraph*{}{
+          
+        }
+  \chapter{Resultados}
+\end{document}
