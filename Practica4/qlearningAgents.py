@@ -177,27 +177,41 @@ class ApproximateQAgent(PacmanQAgent):
         return self.weights
 
     def getQValue(self, state, action):
-        """
-          Should return Q(state,action) = w * featureVector
-          where * is the dotProduct operator
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+      """
+      Calcula Q(state,action) = w * featureVector
+      donde * es el operador de producto punto
+      """
+      features = self.featExtractor.getFeatures(state, action)
+      qValue = 0
+      for feature in features:
+          qValue += features[feature] * self.weights[feature]
+      return qValue
 
     def update(self, state, action, nextState, reward):
-        """
-           Should update your weights based on transition
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+      """
+      Actualiza los pesos basándose en la transición
+      """
+      # Obtener las características del estado actual y acción
+      features = self.featExtractor.getFeatures(state, action)
+      
+      # Calcular el valor máximo de Q para el siguiente estado
+      nextQValue = 0
+      if nextState:  # si no es estado terminal
+          legalActions = self.getLegalActions(nextState)
+          if legalActions:  # si hay acciones legales disponibles
+              nextQValue = max([self.getQValue(nextState, nextAction) 
+                              for nextAction in legalActions])
+      
+      # Calcular el error TD
+      difference = (reward + self.discount * nextQValue) - self.getQValue(state, action)
+      
+      # Actualizar cada peso
+      for feature in features:
+          self.weights[feature] += self.alpha * difference * features[feature]
+    
     def final(self, state):
-        "Called at the end of each game."
-        # call the super-class final method
+        """
+        Llamado al final de cada juego
+        """
         PacmanQAgent.final(self, state)
 
-        # did we finish training?
-        if self.episodesSoFar == self.numTraining:
-            # you might want to print your weights here for debugging
-            "*** YOUR CODE HERE ***"
-            pass
