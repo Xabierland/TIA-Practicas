@@ -187,7 +187,7 @@ class ValueIterationAgent(ValueEstimationAgent):
 \end{lstlisting}
       \subsection*{Comentarios}
         \paragraph*{}{
-          Implementamos el algoritmo de iteración de valores con los cuales fuimos capaces de calcular los óptimos de los estados y las políticas correspondientes de un MDP, gracias a esto nuestro agente es capaz de tomar decisiones basadas en la maximización de recompensas. Gracias a la validación mediante a pruebas y simulaciones s asegura que el agente pueda planificar correctamente en diversos entornos, teniendo así una gran utilidad.
+          Implementamos el algoritmo de iteración de valores con los cuales fuimos capaces de calcular los óptimos de los estados y las políticas correspondientes de un MDP, gracias a esto nuestro agente es capaz de tomar decisiones basadas en la maximización de recompensas. Gracias a la validación mediante a pruebas y simulaciones se asegura que el agente pueda planificar correctamente en diversos entornos, teniendo así una gran utilidad.
         }
     \cpsection{Análisis de cruce de puentes} % * TERMINADO
       \subsection*{Descripción}
@@ -230,9 +230,9 @@ if __name__ == '__main__':
 \end{lstlisting}
       \subsection*{Comentarios}
         \paragraph*{}{
-          La solucion mas sencilla para este ejercicio es el de bajar el ruido por debajo de 0.01.
+          La solución mas sencilla para este ejercicio es el de bajar el ruido por debajo de 0.01.
           Esto hace que las probabilidades de que el agente cometa un error y se caiga a un acantilado de puntos negativos sean muy bajas.
-          No haria falta tocar el valor gamma ya que al tener un factor alto, lo que conseguimos, es que las recompensas futuras tengan un peso mayor lo que con conviene para no acabar llegando a la casilla +1 en vez de a la +10.
+          No haría falta tocar el valor gamma ya que al tener un factor alto, lo que conseguimos, es que las recompensas futuras tengan un peso mayor lo que con conviene para no acabar llegando a la casilla +1 en vez de a la +10.
         }
     \cpsection{Q-Learning} % * TERMINADO
       \subsection*{Descripción}
@@ -241,7 +241,7 @@ if __name__ == '__main__':
           En este ejercicio se trata de implementar un agente que realice el aprendizaje por refuerzo mediante Q-Learning.
           Q-Learning es un algoritmo de aprendizaje por refuerzo que aprende una política óptima sin conocer el modelo del entorno.
           Se basa en ir probando acciones, en un principio de forma aleatoria, y actualizando los valores de la función Q en función de las recompensas recibidas.
-          A medida que se va actualizando la función Q, el agente va aprendiendo la mejor acción a tomar en cada estado y va diminuyendo el numero de acciones aleatorias.
+          A medida que se va actualizando la función Q, el agente va aprendiendo la mejor acción a tomar en cada estado y va disminuyendo el numero de acciones aleatorias.
         }
       \subsection*{Implementación}
 \begin{lstlisting}[language=Python, caption=Q-Learning]
@@ -470,13 +470,13 @@ class QLearningAgent(ReinforcementAgent):
 \end{lstlisting}
       \subsection*{Comentarios}
         \paragraph*{}{
-          Como hemos comentado ya en la descripción del ejercicio simplemente hemos modificado la implementación del temtodo \texttt{getAction} para que dependiendo del valor de epsilon se utilize una accion aleatoria entre las disponibles o se utiliza la mejor accion segun la funcion Q.
+          Como hemos comentado ya en la descripción del ejercicio simplemente hemos modificado la implementación del temtodo \texttt{getAction} para que dependiendo del valor de epsilon se utiliza una acción aleatoria entre las disponibles o se utiliza la mejor acción según la función Q.
         }
     \cpsection{Q-Learning y Pacman} % * TERMINADO
       \subsection*{Comentarios}
         \paragraph*{}{
           Este ejercicio consiste en ver como a medida que aumentamos el tamaño del mapa Pacman juega cada vez peor y va más lento.
-          Esto es debido a la poca eficiencia del Q-Learning y el gran numero de pruebas que se tendrian que hacer para que el agente aprenda.
+          Esto es debido a la poca eficiencia del Q-Learning y el gran numero de pruebas que se tendrían que hacer para que el agente aprenda.
           Para solucionar esto se propone el uso de Q-Learning aproximado en el siguiente ejercicio
         }
     \cpsection{Q-Learning aproximado} % * TERMINADO
@@ -487,7 +487,7 @@ class QLearningAgent(ReinforcementAgent):
           Para ello se usa el Q-Learning aproximado el cual en vez de una tabla estado-acción reemplaza esta por una función de características o features.
           \[ Q(s,a) = w \cdot f(s,a) \]
           Donde \(w\) es un vector de pesos y \(f(s,a)\) es un vector de características.
-          Entonces lo que hacemos es en lugar de aprender valores especificos para cada estado, aprendemos pesos para caracteristicas importantes como la distancia al fantasma más cercano, distancia a la comida...
+          Entonces lo que hacemos es en lugar de aprender valores específicos para cada estado, aprendemos pesos para características importantes como la distancia al fantasma más cercano, distancia a la comida...
         }
       \subsection*{Implementación}
 \begin{lstlisting}[language=Python, caption=Q-Learning y Pacman]
@@ -554,7 +554,7 @@ class ApproximateQAgent(PacmanQAgent):
       Lo que hemos hecho para implementar Q-Learning aproximado es:
         \begin{itemize}
           \item \textbf{getQValue:} Obtenemos el vector de características, calculamos el producto punto entre las características y los pesos.
-          \item \textbf{update:} Calculamos el error TD y actualizamos los pesos. Aqui tenemos que tener en cuenta los estados terminales en los que no existen acciones disponibles ya que el valor Q debe basarse en recompensa inmediata y no en las futuras dado que no existen.
+          \item \textbf{update:} Calculamos el error TD y actualizamos los pesos. Aquí tenemos que tener en cuenta los estados terminales en los que no existen acciones disponibles ya que el valor Q debe basarse en recompensa inmediata y no en las futuras dado que no existen.
         \end{itemize}
       Lo más importante de esto es que ahora generalizamos entre estados que es lo que hace que sea mucho más eficiente.
   \chapter{Resultados} % * TERMINADO
