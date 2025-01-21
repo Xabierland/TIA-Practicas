@@ -8,7 +8,7 @@ Practicas de la asignatura de técnicas de inteligencia artificial.
 - Laboratorio 1 - Problemas de Búsqueda
 - Laboratorio 2 - Búsqueda Multi-Agente
 - Laboratorio 3 - Clasificación (Perceptrón)
-- Laboratorio 4 -
+- Laboratorio 4 - Reinforcement Learning
 
 ## Links
 
